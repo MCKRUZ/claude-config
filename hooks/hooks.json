@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/session-start.ps1\""
+          }
+        ],
+        "description": "Load previous context on new session"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/mcp-health/health-check.ps1\"",
+            "timeout": 15000
+          }
+        ],
+        "description": "Check MCP server health on session start"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/quality-gates/git-safety.ps1\""
+          }
+        ],
+        "description": "Block dangerous git operations (--no-verify, force push, reset --hard)"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/quality-gates/dev-server-block.ps1\""
+          }
+        ],
+        "description": "Block dev server commands that would hang the session"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/quality-gates/config-protection.ps1\""
+          }
+        ],
+        "description": "Block modifications to linter/formatter configs — fix code, not rules"
+      },
+      {
+        "matcher": "tool == \"Edit\" || tool == \"Write\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/strategic-compact/suggest-compact.ps1\""
+          }
+        ],
+        "description": "Suggest manual compaction at logical intervals"
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/pre-compact.ps1\""
+          }
+        ],
+        "description": "Save state before context compaction"
+      }
+    ],
+    "UserPromptSubmit": [],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/quality-gates/console-warn.ps1\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "Warn about console.log statements after file edits"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/session-end.ps1\""
+          }
+        ],
+        "description": "Persist session state on end"
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,31 @@
+name: kruz7-claude-code-mastery
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  - path: ./skills/agent-eval
+  - path: ./skills/agent-introspection
+  - path: ./skills/context-restore
+  - path: ./skills/context-save
+  - path: ./skills/dashboard-creator
+  - path: ./skills/demo-video-skill
+  - path: ./skills/docx
+  - path: ./skills/excalidraw-diagram-skill
+  - path: ./skills/functional-design
+  - path: ./skills/humanizer
+  - path: ./skills/investigate
+  - path: ./skills/llm-cost-optimizer-skill
+  - path: ./skills/orchestrator
+  - path: ./skills/pdf
+  - path: ./skills/project-memory
+  - path: ./skills/security-review-skill
+  - path: ./skills/shannon
+  - path: ./skills/skeptic-skill
+  - path: ./skills/slides-skill
+  - path: ./skills/supply-chain-audit
+  - path: ./skills/tdd-workflow-skill
+  - path: ./skills/tool-builder
+  - path: ./skills/verification-loop
+  - path: ./skills/vet-tool
+  mcp:

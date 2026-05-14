@@ -1,0 +1,7 @@
+name: kruz7-project-avatar
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  mcp:

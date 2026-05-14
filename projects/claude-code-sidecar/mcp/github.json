@@ -1,0 +1,13 @@
+{
+  "type": "stdio",
+  "command": "cmd",
+  "args": [
+    "/c",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-github"
+  ],
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "${PROJECTS_CLAUDE_CODE_SIDECAR_MCP_GITHUB_GITHUB_ENV_GITHUB_PERSONAL_ACCESS_TOKEN}"
+  }
+}

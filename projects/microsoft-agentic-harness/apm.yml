@@ -1,0 +1,8 @@
+name: kruz7-microsoft-agentic-harness
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  - path: ./skills/gitnexus
+  mcp:

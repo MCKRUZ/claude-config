@@ -1,0 +1,7 @@
+name: kruz7-digital-asset-builder
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  mcp:

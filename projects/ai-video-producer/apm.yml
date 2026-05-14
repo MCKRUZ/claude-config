@@ -1,0 +1,12 @@
+name: kruz7-ai-video-producer
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  - path: ./skills/comfyui
+  - path: ./skills/director
+  - path: ./skills/production
+  - path: ./skills/publishing
+  - path: ./skills/utility
+  mcp:

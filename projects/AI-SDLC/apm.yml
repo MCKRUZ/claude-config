@@ -1,0 +1,7 @@
+name: kruz7-AI-SDLC
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  mcp:

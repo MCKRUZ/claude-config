@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/session-start.ps1\"",
+            "timeout": 10000
+          }
+        ],
+        "description": "Load previous context on new session"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/strategic-compact/suggest-compact.ps1\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "Suggest manual compaction at logical intervals"
+      },
+      {
+        "matcher": "Bash(git push*)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before pushing, list the commits that will be pushed and remind the user to review changes."
+          }
+        ],
+        "description": "Review commits before git push"
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/pre-compact.ps1\"",
+            "timeout": 10000
+          }
+        ],
+        "description": "Save state before context compaction"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${USER_HOME}/OneDrive/Documents/Code Repos/MCKRUZ/CodeReviewAssistant/vscode-extension/hooks/claude-hooks.ps1\" -EventType prompt -SessionId \"$SESSION_ID\" -ProjectDir \"$PROJECT_DIR\" -TranscriptPath \"$TRANSCRIPT_PATH\" -Cwd \"$CWD\" -UserPrompt \"$USER_PROMPT\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "AI Code Walkthrough: Track new prompt"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/Program Files/Git/bin/bash.exe\" \"${CLAUDE_USER_HOME}/hooks/auto-format.sh\"",
+            "timeout": 30000
+          }
+        ],
+        "description": "Auto-format files after edit"
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${USER_HOME}/OneDrive/Documents/Code Repos/MCKRUZ/CodeReviewAssistant/vscode-extension/hooks/claude-hooks.ps1\" -EventType change -SessionId \"$SESSION_ID\" -ProjectDir \"$PROJECT_DIR\" -TranscriptPath \"$TRANSCRIPT_PATH\" -Cwd \"$CWD\" -FilePath \"$TOOL_INPUT_FILE_PATH\" -ChangeType \"$TOOL_NAME\" -ToolUseId \"$TOOL_USE_ID\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "AI Code Walkthrough: Capture file changes"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/session-end.ps1\"",
+            "timeout": 10000
+          }
+        ],
+        "description": "Persist session state on end"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/skills/continuous-learning/evaluate-session.ps1\"",
+            "timeout": 10000
+          }
+        ],
+        "description": "Evaluate session for extractable patterns"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${USER_HOME}/OneDrive/Documents/Code Repos/MCKRUZ/CodeReviewAssistant/vscode-extension/hooks/claude-hooks.ps1\" -EventType complete -SessionId \"$SESSION_ID\" -ProjectDir \"$PROJECT_DIR\" -TranscriptPath \"$TRANSCRIPT_PATH\" -Cwd \"$CWD\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "AI Code Walkthrough: Complete session"
+      }
+    ]
+  }
+}
+

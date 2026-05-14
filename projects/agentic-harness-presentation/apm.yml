@@ -1,0 +1,17 @@
+name: kruz7-agentic-harness-presentation
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  - path: ./skills/pluralsight-skill
+  - path: ./skills/ps-assessment
+  - path: ./skills/ps-demo
+  - path: ./skills/ps-export
+  - path: ./skills/ps-outline
+  - path: ./skills/ps-proposal
+  - path: ./skills/ps-review
+  - path: ./skills/ps-script
+  - path: ./skills/ps-slides
+  - path: ./skills/ps-validate
+  mcp:

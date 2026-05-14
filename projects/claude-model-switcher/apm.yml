@@ -1,0 +1,7 @@
+name: kruz7-claude-model-switcher
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  mcp:

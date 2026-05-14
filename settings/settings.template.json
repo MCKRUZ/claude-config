@@ -1,0 +1,281 @@
+{
+  "env": {
+    "TRACE_TO_LANGFUSE": "true",
+    "LANGFUSE_PUBLIC_KEY": "pk-lf-local-claude-code",
+    "LANGFUSE_SECRET_KEY": "${ENV_LANGFUSE_SECRET_KEY}",
+    "LANGFUSE_HOST": "https://langfuse.bablyon.synology.me",
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "${ENV_GITHUB_PERSONAL_ACCESS_TOKEN}",
+    "CLAUDE_CODE_EFFORT_LEVEL": "high",
+    "CLAUDE_HOOK_PROFILE": "standard",
+    "CLAUDE_DISABLED_HOOKS": "ollama-delegate",
+    "SEMGREP_APP_TOKEN": "${ENV_SEMGREP_APP_TOKEN}"
+  },
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "Bash(dotnet *)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(ng *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(az *)",
+      "Bash(bicep *)",
+      "Bash(pwsh *)",
+      "Bash(python *)",
+      "Bash(py *)",
+      "Bash(pytest *)",
+      "Bash(ssh *)",
+      "Bash(claude *)",
+      "mcp__bifrost__*",
+      "mcp__nexus-local__*",
+      "mcp__mcp-unity__*"
+    ],
+    "deny": [
+      "Read(.env*)",
+      "Read(*.env)",
+      "Read(secrets/**)",
+      "Read(appsettings.*.json)",
+      "Bash(rm -rf *)",
+      "Bash(wget *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(pwsh * Invoke-WebRequest *)",
+      "Bash(pwsh * Invoke-RestMethod *)",
+      "Bash(pwsh * iwr *)",
+      "Bash(pwsh * irm *)"
+    ]
+  },
+  "model": "sonnet",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/session-start.ps1\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${USER_HOME}/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/packages/cli/dist/index.js\" sync --quiet --graceful",
+            "timeout": 15000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --experimental-sqlite \"${CLAUDE_USER_HOME}\\hooks\\nexus-session-start.mjs\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_USER_HOME}\\plugins\\cache\\context-mode\\context-mode\\1.0.111/hooks/sessionstart.mjs\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/nvm4w/nodejs/node.exe\" \"${CLAUDE_USER_HOME}/hooks/context-mode-cache-heal.mjs\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/skill-switchboard/switchboard.ps1\"",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/strategic-compact/suggest-compact.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(git push*)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before pushing, list the commits that will be pushed and remind the user to review changes."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|WebFetch|Read|Grep|Agent|Task|mcp__plugin_context-mode_context-mode__ctx_execute|mcp__plugin_context-mode_context-mode__ctx_execute_file|mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_USER_HOME}\\plugins\\cache\\context-mode\\context-mode\\1.0.111/hooks/pretooluse.mjs\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/pre-compact.ps1\"",
+            "timeout": 10000
+          },
+          {
+            "type": "prompt",
+            "prompt": "Before compaction: update MEMORY.md (current work + next steps), update today's session .tmp file, and save reusable patterns via mcp__cmem__save_lesson if any."
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Context was just compacted. Re-orient yourself:\n1. Read your project's MEMORY.md (path is in the auto memory section of your system instructions) for current work state and next steps.\n2. Check the task list (TaskList) for any in-progress tasks.\n3. Review your .claude/rules/ files if working in a specific domain.\nDo NOT announce this re-orientation to the user â€” just resume working seamlessly."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/c/Users/kruz7/.claude/hooks/auto-format.sh\"",
+            "timeout": 30000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/save-observation.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --experimental-sqlite \"${CLAUDE_USER_HOME}\\hooks\\nexus-post-tool-use.mjs\"",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/kill-mcp-children.ps1\"",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_USER_HOME}/hooks/memory-persistence/session-end.ps1\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${USER_HOME}/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/packages/cli/dist/index.js\" hook post-session --quiet",
+            "timeout": 30000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py \"${CLAUDE_USER_HOME}/hooks/langfuse_hook.py\"",
+            "timeout": 30000
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash -c 'plugin_dir=$(ls -d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null | awk -F/ '\"'\"'{ print $(NF-1) \"\\t\" $0 }'\"'\"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec \"/c/nvm4w/nodejs/node\" \"${plugin_dir}dist/index.js\"'"
+  },
+  "enabledPlugins": {
+    "deep-project@piercelamb-plugins": true,
+    "deep-plan@piercelamb-plugins": true,
+    "deep-implement@piercelamb-plugins": true,
+    "code-simplifier@claude-plugins-official": true,
+    "claude-hud@claude-hud": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "semgrep@claude-plugins-official": true,
+    "context-mode@context-mode": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
+    },
+    "context-mode": {
+      "source": {
+        "source": "github",
+        "repo": "mksglu/context-mode"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true,
+  "voiceEnabled": true,
+  "mcpNotes": {
+    "sentry": "Removed 2026-02-09 - Add back when deploying production apps: https://mcp.sentry.dev/mcp",
+    "filesystem": "Removed 2026-02-09 - Built-in Read/Write/Glob/Grep cover file ops, saved ~2-3K tokens",
+    "memory": "Removed 2026-02-09 - cmem MCP provides superior conversation memory + learned lessons",
+    "hub-mode": "Replaced mcp-hub with Bifrost MCP gateway on mac-mini:8090 (2026-03-26). Nexus runs direct as nexus-local. Context Lens removed (Nexus handles analytics).",
+    "config-location": "MCP servers are managed in ~/.claude.json via 'claude mcp add/remove', NOT in settings.json"
+  }
+}

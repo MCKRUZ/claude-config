@@ -1,0 +1,9 @@
+name: kruz7-claude-code-sidecar
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  mcp:
+  - name: github
+    configRef: ./mcp/github.json

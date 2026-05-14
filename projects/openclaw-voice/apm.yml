@@ -1,0 +1,7 @@
+name: kruz7-openclaw-voice
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  mcp:

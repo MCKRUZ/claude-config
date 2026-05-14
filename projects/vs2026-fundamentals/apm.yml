@@ -1,0 +1,24 @@
+name: kruz7-vs2026-fundamentals
+version: 0.1.0
+targets:
+- claude
+dependencies:
+  apm:
+  - path: ./skills/audio-engineering-patterns
+  - path: ./skills/pluralsight-skill
+  - path: ./skills/pptx
+  - path: ./skills/ps-assessment
+  - path: ./skills/ps-audio
+  - path: ./skills/ps-compose
+  - path: ./skills/ps-demo
+  - path: ./skills/ps-export
+  - path: ./skills/ps-outline
+  - path: ./skills/ps-proposal
+  - path: ./skills/ps-record
+  - path: ./skills/ps-review
+  - path: ./skills/ps-script
+  - path: ./skills/ps-slides
+  - path: ./skills/ps-validate
+  - path: ./skills/sound-engineer
+  - path: ./skills/voice-master
+  mcp:
