@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Distributable hooks config for claude-code-mastery. Run install.ps1 to install, or manually merge into ~/.claude/settings.json. {{HOOKS_DIR}} is resolved to the actual hooks path by install.ps1.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/memory-persistence/session-start.ps1\"",
+            "timeout": 10000
+          }
+        ],
+        "description": "Inject prior session notes, learned patterns, and today's file changes at session start"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/mcp-health/health-check.ps1\"",
+            "timeout": 15000
+          }
+        ],
+        "description": "Check MCP server health on session start"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git push*)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before pushing, list the commits that will be pushed and remind the user to review changes."
+          }
+        ],
+        "description": "Review commits before pushing to remote"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/quality-gates/git-safety.ps1\""
+          }
+        ],
+        "description": "Block dangerous git operations (--no-verify, force push, reset --hard)"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/quality-gates/dev-server-block.ps1\""
+          }
+        ],
+        "description": "Block dev server commands that would hang the session"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/quality-gates/conventional-commits.ps1\""
+          }
+        ],
+        "description": "Validate commit messages follow conventional commits format (type: description)"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/quality-gates/secret-scanner.ps1\""
+          }
+        ],
+        "description": "Scan for hardcoded secrets (API keys, tokens, connection strings) before git commits"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/quality-gates/config-protection.ps1\""
+          }
+        ],
+        "description": "Block modifications to linter/formatter configs — fix code, not rules"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/quality-gates/tdd-gate.ps1\""
+          }
+        ],
+        "description": "Block edits to production code without a corresponding test file (strict profile only)"
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/strategic-compact/suggest-compact.ps1\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "Suggest manual compaction at logical intervals"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/auto-format/format-on-edit.ps1\"",
+            "timeout": 30000
+          }
+        ],
+        "description": "Auto-format edited files using appropriate formatter (prettier, black, gofmt, etc.)"
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/memory-persistence/save-observation.ps1\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "Append edited file path to today's observation log for cross-session context"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/quality-gates/console-warn.ps1\"",
+            "timeout": 5000
+          }
+        ],
+        "description": "Warn about console.log statements after file edits"
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/memory-persistence/pre-compact.ps1\"",
+            "timeout": 10000
+          },
+          {
+            "type": "prompt",
+            "prompt": "Before compaction: update MEMORY.md (current work + next steps), update today's session .tmp file, and save reusable patterns via mcp__cmem__save_lesson if any."
+          }
+        ],
+        "description": "Save session state and prompt Claude to persist notes before context compaction"
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Context was just compacted. Re-orient yourself:\n1. Read your project's MEMORY.md for current work state and next steps.\n2. Check the task list (TaskList) for any in-progress tasks.\n3. Review your .claude/rules/ files if working in a specific domain.\nDo NOT announce this re-orientation to the user — just resume working seamlessly."
+          }
+        ],
+        "description": "Re-orient Claude after context compaction without interrupting the user"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/kill-mcp-children.ps1\"",
+            "timeout": 8000
+          }
+        ],
+        "description": "Kill orphaned MCP child processes (node.exe, uv.exe) on session end"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/memory-persistence/session-end.ps1\"",
+            "timeout": 10000
+          }
+        ],
+        "description": "Create/update daily session file and run optional Nexus sync"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"{{HOOKS_DIR}}/notifications/discord-notify.ps1\"",
+            "timeout": 10000
+          }
+        ],
+        "description": "Send Discord notification when session ends (requires DISCORD_WEBHOOK_URL env var)"
+      }
+    ]
+  }
+}

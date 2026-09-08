@@ -1,0 +1,8 @@
+installed_at: '2026-01-16T15:57:16+00:00'
+skill_id: anthropics/skills/docx
+git_repo: https://github.com/anthropics/skills.git
+skill_path: /main/skills/docx
+git_sha: 69c0b1a0674149f27b61b2635f935524b6add202
+skilz_version: 1.7.0
+install_mode: copy
+canonical_path: null

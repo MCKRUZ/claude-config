@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:docs.openclaw.ai)",
+      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "mcp__plugin_context-mode_context-mode__ctx_fetch_and_index",
+      "mcp__plugin_context-mode_context-mode__ctx_execute",
+      "mcp__plugin_context-mode_context-mode__ctx_search",
+      "mcp__plugin_context-mode_context-mode__ctx_doctor",
+      "mcp__plugin_context-mode_context-mode__ctx_upgrade",
+      "Bash(node *)",
+      "Bash(where.exe bun *)",
+      "Bash(cmd.exe *)",
+      "Bash(powershell -NoProfile -Command \"Resolve-DnsName bablyon -ErrorAction SilentlyContinue | Select-Object Name,Type,IPAddress,NameHost | Format-Table -AutoSize | Out-String\")",
+      "Bash(powershell -NoProfile -Command \"\nforeach \\(\\\\$ip in '192.168.50.9','192.168.50.10'\\) {\n  foreach \\(\\\\$p in 9000,8000,22,5000,4999\\) {\n    \\\\$t = Test-NetConnection -ComputerName \\\\$ip -Port \\\\$p -InformationLevel Quiet -WarningAction SilentlyContinue\n    \\\\$state = if \\(\\\\$t\\) { 'OPEN' } else { 'BLOCKED' }\n    Write-Output \\('  {0}:{1} -> {2}' -f \\\\$ip, \\\\$p, \\\\$state\\)\n  }\n}\" 2>/dev/null)",
+      "Bash(scp -i ~/.ssh/id_ed25519 -o ConnectTimeout=10 C:/Users/kruz7/AppData/Local/Temp/claude/C--Users-kruz7/319f1e57-054b-4663-ae56-20565fbb3a56/scratchpad/portainer-docker-compose.yml Hyriel@bablyon:/volume1/docker/portainer/docker-compose.yml)",
+      "Bash(powershell -NoProfile -Command \"\n[Net.ServicePointManager]::ServerCertificateValidationCallback = { \\\\$true }\nWrite-Output '=== From Windows: HTTP/HTTPS to Portainer ==='\nforeach \\(\\\\$u in 'http://bablyon:9000/api/system/status','https://bablyon:9443/api/system/status'\\) {\n  try {\n    \\\\$r = Invoke-WebRequest -Uri \\\\$u -TimeoutSec 12 -UseBasicParsing\n    Write-Output \\('  {0} -> {1} {2}' -f \\\\$u, \\\\$r.StatusCode, \\\\$r.Content\\)\n  } catch {\n    Write-Output \\('  {0} -> FAIL: {1}' -f \\\\$u, \\\\$_.Exception.Message\\)\n  }\n}\nWrite-Output ''\nWrite-Output '=== From Windows: LAN IP port states ==='\nforeach \\(\\\\$p in 9000,9443,8000\\) {\n  \\\\$t = Test-NetConnection -ComputerName '192.168.50.9' -Port \\\\$p -InformationLevel Quiet -WarningAction SilentlyContinue\n  \\\\$state = if \\(\\\\$t\\) { 'OPEN' } else { 'CLOSED' }\n  Write-Output \\('  192.168.50.9:{0} -> {1}' -f \\\\$p, \\\\$state\\)\n}\" 2>/dev/null)",
+      "Bash(powershell -NoProfile -Command \"\n[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12\n[Net.ServicePointManager]::ServerCertificateValidationCallback = { \\\\$true }\ntry {\n  \\\\$r = Invoke-WebRequest -Uri 'https://bablyon:9443/api/system/status' -TimeoutSec 12 -UseBasicParsing\n  Write-Output \\('  HTTPS 9443 \\(TLS1.2\\) -> {0} {1}' -f \\\\$r.StatusCode, \\\\$r.Content\\)\n} catch {\n  Write-Output \\('  HTTPS 9443 \\(TLS1.2\\) -> FAIL: {0}' -f \\\\$_.Exception.Message\\)\n}\n\\\\$req = [Net.HttpWebRequest]::Create\\('https://bablyon:9443/'\\)\n\\\\$req.Timeout = 12000\ntry { \\\\$resp = \\\\$req.GetResponse\\(\\); \\\\$cert = \\\\$req.ServicePoint.Certificate\n  Write-Output \\('  cert subject : {0}' -f \\\\$cert.Subject\\)\n  Write-Output \\('  cert issuer  : {0}' -f \\\\$cert.Issuer\\)\n  Write-Output \\('  cert expires : {0}' -f \\\\$cert.GetExpirationDateString\\(\\)\\)\n  \\\\$resp.Close\\(\\)\n} catch { Write-Output \\('  cert read failed: {0}' -f \\\\$_.Exception.Message\\) }\" 2>/dev/null)",
+      "Bash(powershell -NoProfile -Command \"\n[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12\nWrite-Output '=== Strict TLS validation \\(NO cert bypass\\) from Windows ==='\nforeach \\(\\\\$u in 'https://bablyon.tail2800e3.ts.net:9443/api/system/status'\\) {\n  try {\n    \\\\$r = Invoke-WebRequest -Uri \\\\$u -TimeoutSec 20 -UseBasicParsing\n    Write-Output \\('  OK  {0}' -f \\\\$r.StatusCode\\)\n    Write-Output \\('      {0}' -f \\\\$r.Content\\)\n  } catch {\n    Write-Output \\('  FAIL: {0}' -f \\\\$_.Exception.Message\\)\n  }\n}\nWrite-Output ''\nWrite-Output '=== Certificate the client actually receives ==='\n\\\\$req = [Net.HttpWebRequest]::Create\\('https://bablyon.tail2800e3.ts.net:9443/'\\)\n\\\\$req.Timeout = 20000\ntry {\n  \\\\$resp = \\\\$req.GetResponse\\(\\)\n  \\\\$c = \\\\$req.ServicePoint.Certificate\n  Write-Output \\('  subject : {0}' -f \\\\$c.Subject\\)\n  Write-Output \\('  issuer  : {0}' -f \\\\$c.Issuer\\)\n  Write-Output \\('  expires : {0}' -f \\\\$c.GetExpirationDateString\\(\\)\\)\n  \\\\$resp.Close\\(\\)\n} catch { Write-Output \\('  cert read failed: {0}' -f \\\\$_.Exception.Message\\) }\" 2>/dev/null)",
+      "Bash(powershell -NoProfile -Command \"\n[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12\nWrite-Output '=== HTTPS \\(strict validation, no bypass\\) ==='\ntry {\n  \\\\$r = Invoke-WebRequest -Uri 'https://bablyon.tail2800e3.ts.net:9443/api/system/status' -TimeoutSec 20 -UseBasicParsing\n  Write-Output \\('  OK {0}  {1}' -f \\\\$r.StatusCode, \\\\$r.Content\\)\n} catch { Write-Output \\('  FAIL: {0}' -f \\\\$_.Exception.Message\\) }\n\nWrite-Output ''\nWrite-Output '=== Admin user still intact \\(204 = yes\\) ==='\ntry {\n  \\\\$r = Invoke-WebRequest -Uri 'https://bablyon.tail2800e3.ts.net:9443/api/users/admin/check' -TimeoutSec 20 -UseBasicParsing\n  Write-Output \\('  {0}' -f \\\\$r.StatusCode\\)\n} catch { Write-Output \\('  {0}' -f \\\\$_.Exception.Response.StatusCode.value__\\) }\n\nWrite-Output ''\nWrite-Output '=== Port exposure from the network ==='\nforeach \\(\\\\$p in 9443,9000,8000\\) {\n  \\\\$t = Test-NetConnection -ComputerName 'bablyon.tail2800e3.ts.net' -Port \\\\$p -InformationLevel Quiet -WarningAction SilentlyContinue\n  \\\\$state = if \\(\\\\$t\\) { 'OPEN' } else { 'CLOSED' }\n  Write-Output \\('  {0} -> {1}' -f \\\\$p, \\\\$state\\)\n}\" 2>/dev/null)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"C:\\\\Users\\\\kruz7\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\hook.mjs\" ] || node \"C:\\\\Users\\\\kruz7\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\hook.mjs\"",
+            "timeout": 5,
+            "statusMessage": "Checking UI changes"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -f \"C:\\\\Users\\\\kruz7\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\hook.mjs\" ] || node \"C:\\\\Users\\\\kruz7\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\hook.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Design deep pass"
+          }
+        ]
+      }
+    ]
+  },
+  "description": "Impeccable design detector: immediate-tier checks after Edit/Write on UI files, full-rule deep pass on Stop."
+}

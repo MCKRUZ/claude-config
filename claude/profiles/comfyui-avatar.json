@@ -1,0 +1,41 @@
+{
+  "name": "comfyui-avatar",
+  "description": "AI visual generation and digital avatar profile. Covers ComfyUI workflow orchestration, video production, technique registry validation, and soul-first avatar platform development (.NET + Python).",
+  "projects": [
+    "ai-video-producer",
+    "project-avatar",
+    "ComfyUI Expert",
+    "comfyui-pipeline"
+  ],
+  "agents": {
+    "activate": [
+      "_archived/design/visual-storyteller.md",
+      "_archived/design/brand-guardian.md"
+    ],
+    "base_active": [
+      "matts-custom/architect.md",
+      "matts-custom/build-error-resolver.md",
+      "matts-custom/security-reviewer.md",
+      "matts-custom/planner.md",
+      "engineering/ai-engineer.md",
+      "engineering/backend-architect.md",
+      "testing/performance-benchmarker.md"
+    ]
+  },
+  "skills": {
+    "key_skills": [
+      "claude-api",
+      "deep-plan",
+      "deep-implement",
+      "security-review",
+      "visual-explainer"
+    ]
+  },
+  "tech_stacks": {
+    "project-avatar": ".NET 10, Clean Architecture, Neo4j, MediatR, Hangfire, Claude API, Ollama, Discord",
+    "ai-video-producer": "Python 3.12, FastAPI, PyTorch CUDA, F5-TTS, SpeechBrain",
+    "comfyui-pipeline": "Python 3.12, uv, pytest, YAML registry, JSON schema validation",
+    "ComfyUI Expert": "Markdown skills, YAML config, PowerShell inventory scanning"
+  },
+  "notes": "Cross-project workflow: ComfyUI Expert coaches technique selection → comfyui-pipeline validates workflows → ai-video-producer orchestrates generation → project-avatar provides persistent character identity. ai-engineer and performance-benchmarker are especially relevant for GPU pipeline optimization."
+}

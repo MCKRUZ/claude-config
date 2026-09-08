@@ -1,0 +1,1479 @@
+<title>Claude Code Toolbox — what each tool does</title>
+<style>
+  :root {
+    --ground: #f2f1ed;
+    --surface: #fbfaf8;
+    --surface-2: #eae8e2;
+    --ink: #1b1c1f;
+    --ink-soft: #47474a;
+    --muted: #6f6b64;
+    --rule: #d6d3cb;
+    --accent: #a8681f;
+    --accent-soft: #f0e2ce;
+    --cool: #40606b;
+    --cool-soft: #dde7e9;
+    --warn: #8a5a2b;
+    --warn-soft: #f4e6d6;
+
+    --serif:
+      ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans:
+      ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --mono:
+      ui-monospace, "Cascadia Mono", "Cascadia Code", Consolas, "SF Mono",
+      Menlo, monospace;
+
+    --step--1: clamp(0.78rem, 0.76rem + 0.12vw, 0.84rem);
+    --step-0: clamp(0.98rem, 0.95rem + 0.16vw, 1.06rem);
+    --step-1: clamp(1.14rem, 1.08rem + 0.3vw, 1.3rem);
+    --step-2: clamp(1.4rem, 1.28rem + 0.6vw, 1.75rem);
+    --step-3: clamp(1.8rem, 1.55rem + 1.2vw, 2.6rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #131418;
+      --surface: #1b1d22;
+      --surface-2: #23262c;
+      --ink: #eceae5;
+      --ink-soft: #c2bfb8;
+      --muted: #918c83;
+      --rule: #32353c;
+      --accent: #d89b52;
+      --accent-soft: #3a2c18;
+      --cool: #8fb3bd;
+      --cool-soft: #1e2c31;
+      --warn: #d0a06a;
+      --warn-soft: #332617;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #131418;
+    --surface: #1b1d22;
+    --surface-2: #23262c;
+    --ink: #eceae5;
+    --ink-soft: #c2bfb8;
+    --muted: #918c83;
+    --rule: #32353c;
+    --accent: #d89b52;
+    --accent-soft: #3a2c18;
+    --cool: #8fb3bd;
+    --cool-soft: #1e2c31;
+    --warn: #d0a06a;
+    --warn-soft: #332617;
+  }
+
+  :root[data-theme="light"] {
+    --ground: #f2f1ed;
+    --surface: #fbfaf8;
+    --surface-2: #eae8e2;
+    --ink: #1b1c1f;
+    --ink-soft: #47474a;
+    --muted: #6f6b64;
+    --rule: #d6d3cb;
+    --accent: #a8681f;
+    --accent-soft: #f0e2ce;
+    --cool: #40606b;
+    --cool-soft: #dde7e9;
+    --warn: #8a5a2b;
+    --warn-soft: #f4e6d6;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2rem) 5rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--serif);
+    font-weight: 600;
+    text-wrap: balance;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  a {
+    color: var(--accent);
+    text-underline-offset: 0.18em;
+  }
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  code,
+  .mono {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+
+  /* ---- masthead ---- */
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .masthead h1 {
+    font-size: var(--step-3);
+  }
+  .standfirst {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  .tally {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.6rem;
+    margin-top: 0.4rem;
+    padding: 0;
+    list-style: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .tally li {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0;
+  }
+  .tally b {
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    font-weight: 600;
+    line-height: 1;
+  }
+  .tally span {
+    font-family: var(--mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ---- key ---- */
+  .key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    margin: 1.6rem 0 0;
+    padding: 0.9rem 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .key div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* ---- chips ---- */
+  .chip {
+    display: inline-block;
+    flex: none;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.16rem 0.45rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .chip-you {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .chip-auto {
+    background: var(--cool-soft);
+    color: var(--cool);
+    border: 1px solid var(--cool);
+  }
+  .chip-flag {
+    background: var(--warn-soft);
+    color: var(--warn);
+    border: 1px solid var(--warn);
+  }
+
+  /* ---- sections ---- */
+  section {
+    margin-top: 3.5rem;
+  }
+  .sec-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sec-head h2 {
+    font-size: var(--step-2);
+  }
+  .sec-head p {
+    margin: 0;
+    color: var(--muted);
+    max-width: 62ch;
+    font-size: var(--step-0);
+  }
+
+  /* ---- pipeline ---- */
+  .stage {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr;
+    gap: 0 1.1rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .stage:last-of-type {
+    border-bottom: none;
+  }
+  .stage-num {
+    font-family: var(--mono);
+    font-size: var(--step--1);
+    color: var(--accent);
+    padding-top: 0.35rem;
+    letter-spacing: 0.04em;
+  }
+  .stage-body {
+    min-width: 0;
+  }
+  .stage-body > h3 {
+    font-size: var(--step-1);
+  }
+  .stage-why {
+    margin: 0.3rem 0 1rem;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+
+  /* ---- tool rows ---- */
+  .tools {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .tool {
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    gap: 0.15rem 1.1rem;
+    align-items: baseline;
+  }
+  @media (max-width: 42rem) {
+    .tool {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+    .stage {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    .stage-num {
+      padding-top: 0;
+    }
+  }
+  .tool-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+  }
+  .tool-name .mono {
+    font-weight: 600;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .tool-desc {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .tool-desc em {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ---- card grid ---- */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
+    gap: 1rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 1.1rem 1.2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .card > h3 {
+    font-size: var(--step-0);
+    font-family: var(--mono);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---- callout ---- */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 3px 3px 0;
+    padding: 1.1rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .callout h3 {
+    font-size: var(--step-1);
+  }
+  .callout p {
+    margin: 0;
+    color: var(--ink-soft);
+    max-width: 66ch;
+  }
+  .callout ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--ink-soft);
+  }
+  .callout li {
+    margin-bottom: 0.5rem;
+  }
+  .callout li:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- table ---- */
+  .scroll-x {
+    overflow-x: auto;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 34rem;
+    font-size: var(--step--1);
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 0.55rem 0.9rem 0.55rem 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  td .mono {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  td.ver {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+  footer p {
+    margin: 0 0 0.4rem;
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">
+      Claude Code &middot; installed toolbox &middot; 6 August 2026
+    </p>
+    <h1>What each tool actually does</h1>
+    <p class="standfirst">
+      A plain-language reference to everything wired into your Claude Code setup
+      — the skills, the commands, the plugins, and the outside services it can
+      reach.
+    </p>
+    <ul class="tally">
+      <li><b>25</b><span>Pocock skills</span></li>
+      <li><b>29</b><span>Your own skills</span></li>
+      <li><b>4</b><span>Commands</span></li>
+      <li><b>13</b><span>Plugins</span></li>
+      <li><b>7</b><span>Connections</span></li>
+    </ul>
+  </header>
+
+  <div class="key">
+    <div>
+      <span class="chip chip-you">/you type it</span> You invoke it deliberately
+      by name.
+    </div>
+    <div>
+      <span class="chip chip-auto">automatic</span> Claude reaches for it when
+      the situation fits.
+    </div>
+    <div>
+      <span class="chip chip-flag">check this</span> Needs a decision from you.
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>The engineering pipeline</h2>
+      <p>
+        Matt Pocock's engineering skills aren't a menu — they're a sequence.
+        Each stage hands its output to the next, and the whole point is that you
+        clear the conversation between stages so context never goes stale. If
+        you only remember one thing, remember this order.
+      </p>
+    </div>
+
+    <div class="stage">
+      <div class="stage-num">01</div>
+      <div class="stage-body">
+        <h3>Sharpen the idea</h3>
+        <p class="stage-why">
+          Before anything gets written down, the idea gets interrogated. These
+          run a relentless interview that walks every branch of the decision
+          tree, one dependency at a time, and gives you a recommended answer at
+          each fork.
+        </p>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/grill-with-docs</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              The interview, run against a real codebase — and it leaves a paper
+              trail, writing decision records and a glossary as you go.
+              <em>Start here when the work lives in a repo.</em>
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/grill-me</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              The same interview with no codebase and no paper trail.
+              <em
+                >For sharpening a plan, pitch, or decision that doesn't live in
+                a repo.</em
+              >
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">grilling</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              The underlying interview technique both of the above are built on.
+              Fires on its own whenever you ask to stress-test your thinking.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/to-questionnaire</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              The inverse move: when the decision genuinely needs someone else's
+              answer, this turns it into a questionnaire for them to fill in —
+              grilling you about what you need back, not about the subject
+              itself.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-num">02</div>
+      <div class="stage-body">
+        <h3>Decide the shape</h3>
+        <p class="stage-why">
+          Once the idea holds up, the question becomes what to build and where
+          the boundaries go.
+        </p>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">codebase-design</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              Shared vocabulary for designing modules that hide their complexity
+              behind a small surface — where a boundary belongs, and what makes
+              code easy for both people and agents to navigate.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">domain-modeling</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              Pins down what the business words actually mean so everyone uses
+              them the same way, and records architectural decisions as they're
+              made.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">prototype</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              Builds a throwaway to answer one design question — now a single
+              shareable HTML file a non-developer can open and drive. Kept on a
+              side branch as evidence rather than deleted.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/improve-codebase-architecture</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Scans for places the design could be tightened, reports them
+              visually, then grills you through whichever one you pick.
+              Deliberately biased toward code you're actively changing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-num">03</div>
+      <div class="stage-body">
+        <h3>Map work too big for one sitting</h3>
+        <p class="stage-why">
+          Skip this stage for anything a single session can hold. It's the
+          heaviest flow in the set and over-reaching for it is the most common
+          mistake.
+        </p>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/wayfinder</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Turns an effort larger than any one conversation into a shared map
+              of <em>decision tickets</em> — open questions whose resolution is
+              a decision, not a slice of build work — then resolves them one at
+              a time until the route is clear. Hands off to stage 4 when the map
+              clears; it does not build.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">research</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              Sends a background agent to investigate a question against primary
+              sources and writes the findings into the repo. The one thing
+              wayfinder runs in parallel rather than one-at-a-time.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-num">04</div>
+      <div class="stage-body">
+        <h3>Write it down</h3>
+        <p class="stage-why">
+          Turning a sharpened conversation into something another session — or
+          another person — can pick up cold.
+        </p>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/to-spec</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Synthesises the conversation you've just had into a spec on your
+              issue tracker. No fresh interview — it only writes down what you
+              already settled.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/to-tickets</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Splits the spec into thin end-to-end slices, each declaring what
+              blocks it. On a real tracker those become native blocking links,
+              so anything unblocked can be grabbed and worked immediately.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/triage</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Moves incoming issues and outside pull requests through a fixed
+              set of states — categorise, verify, grill if unclear — and writes
+              briefs an agent can act on without further explanation.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-num">05</div>
+      <div class="stage-body">
+        <h3>Build it</h3>
+        <p class="stage-why">
+          One ticket per session, clearing context between each.
+        </p>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/implement</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Builds a piece of work from a spec or a ticket. The main event.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">tdd</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              Test-first development — write the failing test, make it pass,
+              tidy up. Your global rules already make this mandatory for bug
+              fixes.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">diagnosing-bugs</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              A structured loop for bugs and slowdowns where the cause isn't
+              obvious. As of this version it redacts secrets from every command,
+              output, and captured artifact by default.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">wizard</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              When a step genuinely needs a human — a dashboard click, an
+              approval, a credential — this generates a guided script that walks
+              you through it, opens the right pages, captures the values and
+              writes them where they belong. It fires on its own the moment work
+              hits something an agent can't do.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">resolving-merge-conflicts</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              Works through an in-progress merge or rebase conflict.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-num">06</div>
+      <div class="stage-body">
+        <h3>Check it</h3>
+        <p class="stage-why">
+          The distinguishing idea: reviewing against the standards
+          <em>and</em> against what was actually asked for are two different
+          jobs, so they run as two separate reviewers at once.
+        </p>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">code-review</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              Reviews everything since a chosen point on two axes in parallel —
+              does this follow the repo's documented standards, and does it
+              match what the originating issue asked for — then reports them
+              side by side.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Alongside the pipeline</h2>
+      <p>Not a stage — reach for these whenever the moment calls for them.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>When you're lost</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/ask-matt</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              The router. Describe your situation and it tells you which flow
+              you're in and what to reach for. Also covers what to do at the
+              boundary between two chunks of work — carry on, clear, hand off,
+              delegate, or compact.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/wait-what</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Two words, typed the instant a reply doesn't land. Claude
+              re-pitches it in simplified English with the context it skipped.
+              Naming <em>your</em> confusion rather than asking for brevity gets
+              you both fewer words and the missing context.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Moving between sessions</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/handoff</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Compresses the conversation into a document another agent can pick
+              up cold. Narrower than it sounds — you need it only when the work
+              has to <em>travel</em>: a different tool, a different folder, a
+              colleague, or a side task you forked off mid-flow.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/teach</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Learn a concept across several sessions, using the current folder
+              as the workspace that remembers where you got to.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Setup &amp; authoring</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">/setup-matt-pocock-skills</span
+              ><span class="chip chip-you">/you type it</span>
+            </div>
+            <p class="tool-desc">
+              Run once per repository. Tells the other skills where your issues
+              live, what your triage labels are called, and where the domain
+              docs go. The rest of the set assumes this has happened.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">writing-for-agents</span
+              ><span class="chip chip-auto">automatic</span>
+            </div>
+            <p class="tool-desc">
+              How to write documents an agent will read — skills, instruction
+              files, anything reached by a pointer. Fires whenever you're
+              editing one. Its governing idea: don't restate what the agent
+              could look up itself; capture only what it can't find by looking.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Your own skills</h2>
+      <p>
+        Twenty-nine skills sitting in your personal folder, from various
+        authors. These are files you own and can edit — nothing updates them
+        behind your back.
+      </p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>How Claude treats you</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">communication-style</span>
+            </div>
+            <p class="tool-desc">
+              Always on. Forces plain language, answer-first replies, and one
+              question at a time. The reason this page reads the way it does.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">confidence-calibration</span>
+            </div>
+            <p class="tool-desc">
+              Always on. Stops Claude sounding certain when it isn't, and blocks
+              the reflexive "great idea" agreement.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">skeptic</span></div>
+            <p class="tool-desc">
+              Deliberately attacks a plan — hidden complexity, weak assumptions,
+              the case against.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Research &amp; writing</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">deep-research-plus</span>
+            </div>
+            <p class="tool-desc">
+              Multi-source research with citations checked, community sentiment
+              folded in, and a saved HTML report.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">executive-eye</span></div>
+            <p class="tool-desc">
+              Restructures a document so the point leads. For anything going to
+              leadership.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">humanizer</span></div>
+            <p class="tool-desc">
+              Strips the tells of machine-written prose — the stock vocabulary,
+              the rule of three, the uniform paragraphs.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">writing-fragments</span>
+            </div>
+            <p class="tool-desc">
+              Stage one of drafting: mine raw material, impose no structure yet.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">writing-shape</span></div>
+            <p class="tool-desc">
+              Stage two: shape that material into an article, paragraph by
+              paragraph.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">writing-beats</span></div>
+            <p class="tool-desc">
+              Stage two, alternative: build a journey of beats, defining each
+              term before leaning on it.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">obsidian-vault</span>
+            </div>
+            <p class="tool-desc">
+              Search, create and cross-link notes in your Obsidian vault.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Documents &amp; visuals</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name"><span class="mono">docx</span></div>
+            <p class="tool-desc">
+              Word documents — create, edit, tracked changes, comments.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">pdf</span></div>
+            <p class="tool-desc">
+              PDFs — pull out text and tables, fill forms, merge and split.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">visual-explainer</span>
+            </div>
+            <p class="tool-desc">
+              Turns a system, plan or diff into a self-contained HTML page.
+              Fires automatically instead of drawing a big text table.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">excalidraw-diagram-generator</span>
+            </div>
+            <p class="tool-desc">
+              Diagrams from a description, as editable Excalidraw files.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">demo-video</span></div>
+            <p class="tool-desc">
+              Screenshots, screen recordings and GIFs for READMEs.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">functional-design</span>
+            </div>
+            <p class="tool-desc">
+              Takes a feature from behaviour spec through visual design to built
+              components.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Engineering</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">update-and-refactor</span>
+            </div>
+            <p class="tool-desc">
+              Finds outdated dependencies, works out what actually breaks if you
+              upgrade, reports it, then applies fixes one at a time on your
+              say-so.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">llm-cost-optimizer</span>
+            </div>
+            <p class="tool-desc">
+              Audits which AI model each part of your code calls and flags where
+              a cheaper one would do.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">git-guardrails-claude-code</span>
+            </div>
+            <p class="tool-desc">
+              Blocks destructive git commands before they run.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">setup-pre-commit</span>
+            </div>
+            <p class="tool-desc">
+              Wires up formatting, type checks and tests to run before every
+              commit.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">setup-ts-deep-modules</span>
+            </div>
+            <p class="tool-desc">
+              Enforces module boundaries in a TypeScript repo so internals can't
+              be reached around.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">loop-me</span></div>
+            <p class="tool-desc">
+              Interviews you about workflows you want to build in the current
+              workspace.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">qa</span
+              ><span class="chip chip-flag">check this</span>
+            </div>
+            <p class="tool-desc">
+              Conversational bug reporting that files the issues for you.
+              <em
+                >Retired upstream — yours still works but will never be
+                updated.</em
+              >
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">design-an-interface</span
+              ><span class="chip chip-flag">check this</span>
+            </div>
+            <p class="tool-desc">
+              Generates several radically different API designs in parallel to
+              compare. <em>Retired upstream.</em>
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">request-refactor-plan</span
+              ><span class="chip chip-flag">check this</span>
+            </div>
+            <p class="tool-desc">
+              Interviews you into a refactor plan of tiny safe commits, filed as
+              an issue. <em>Retired upstream.</em>
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">learning-workspace</span
+              ><span class="chip chip-flag">check this</span>
+            </div>
+            <p class="tool-desc">
+              <em>A renamed copy of the skill now shipping as</em>
+              <span class="mono">/teach</span><em>. You have both.</em>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Security</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name"><span class="mono">shannon</span></div>
+            <p class="tool-desc">
+              Runs a real penetration test against a web app or API with full
+              source access — finds attack routes and proves them by exploiting
+              them.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Managing skills themselves</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name"><span class="mono">skill-creator</span></div>
+            <p class="tool-desc">
+              Build, edit and benchmark skills — including testing whether a
+              skill reliably triggers when it should.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">find-skills</span></div>
+            <p class="tool-desc">
+              Finds and installs a skill for something you're trying to do.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Your slash commands</h2>
+      <p>Shortcuts you wrote yourself, kept separately from skills.</p>
+    </div>
+    <div class="tools">
+      <div class="tool">
+        <div class="tool-name">
+          <span class="mono">/e2e</span
+          ><span class="chip chip-you">/you type it</span>
+        </div>
+        <p class="tool-desc">
+          Writes and runs full user-journey tests in a real browser, capturing
+          screenshots and video when one fails.
+        </p>
+      </div>
+      <div class="tool">
+        <div class="tool-name">
+          <span class="mono">/harness-audit</span
+          ><span class="chip chip-you">/you type it</span>
+        </div>
+        <p class="tool-desc">
+          Health check across your whole Claude Code setup.
+        </p>
+      </div>
+      <div class="tool">
+        <div class="tool-name">
+          <span class="mono">/refresh</span
+          ><span class="chip chip-you">/you type it</span>
+        </div>
+        <p class="tool-desc">
+          Catches this terminal up on whatever your phone session has been
+          doing.
+        </p>
+      </div>
+      <div class="tool">
+        <div class="tool-name">
+          <span class="mono">/update-docs</span
+          ><span class="chip chip-you">/you type it</span>
+        </div>
+        <p class="tool-desc">
+          Brings documentation back in line with the code.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Plugins</h2>
+      <p>
+        Managed bundles that update themselves. Unlike the skills above, you
+        don't own these files — you subscribe to them.
+      </p>
+    </div>
+    <div class="scroll-x">
+      <table>
+        <thead>
+          <tr>
+            <th>Plugin</th>
+            <th>Version</th>
+            <th>What it gives you</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">mattpocock-skills</span></td>
+            <td class="ver">1.2.2</td>
+            <td>
+              The 25 engineering and productivity skills documented above.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">context-mode</span></td>
+            <td class="ver">1.0.169</td>
+            <td>
+              Runs heavy analysis in a sandbox so raw output never fills the
+              conversation. The reason long sessions stay coherent.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">understand-anything</span></td>
+            <td class="ver">2.8.1</td>
+            <td>
+              Maps an unfamiliar codebase into an interactive diagram of how it
+              fits together, plus guided tours and onboarding guides.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">mck-scaffold</span></td>
+            <td class="ver">0.18.0</td>
+            <td>
+              Your own scaffolding — installs a chosen development methodology
+              into a new project.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">deep-plan</span></td>
+            <td class="ver">0.3.1</td>
+            <td>
+              Long-form implementation plans, reviewed by several models before
+              you commit to them.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">deep-implement</span></td>
+            <td class="ver">0.2.0</td>
+            <td>
+              Builds from those plans test-first, with review and git workflow
+              built in.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">deep-project</span></td>
+            <td class="ver">0.2.0</td>
+            <td>
+              Breaks a vague, large ambition into pieces small enough to plan.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">superpowers</span></td>
+            <td class="ver">6.2.0</td>
+            <td>A large general skill bundle.</td>
+          </tr>
+          <tr>
+            <td><span class="mono">semgrep</span></td>
+            <td class="ver">2.1.4</td>
+            <td>
+              Static security scanning — spots vulnerable patterns in code.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">code-simplifier</span></td>
+            <td class="ver">1.0.0</td>
+            <td>
+              Tidies recently changed code for clarity without altering
+              behaviour.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">claude-code-setup</span></td>
+            <td class="ver">1.0.0</td>
+            <td>
+              Recommends which automations a given project should be using.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="mono">claude-hud</span></td>
+            <td class="ver">0.0.11</td>
+            <td>The status line at the bottom of your terminal.</td>
+          </tr>
+          <tr>
+            <td><span class="mono">wt-agent-hooks</span></td>
+            <td class="ver">0.1.2</td>
+            <td>Local hooks for agent worktrees.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Outside connections</h2>
+      <p>
+        Services Claude can reach into directly. Everything under Bifrost runs
+        through one gateway on your Mac Mini rather than connecting separately.
+      </p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>Bifrost gateway</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name"><span class="mono">context7</span></div>
+            <p class="tool-desc">
+              Exact, version-specific documentation for third-party libraries.
+              Use it when a method signature has to be right rather than
+              remembered.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">microsoft_learn</span>
+            </div>
+            <p class="tool-desc">
+              Official Microsoft, Azure and .NET documentation — more reliable
+              than a web search for your stack.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">sequential_thinking</span>
+            </div>
+            <p class="tool-desc">
+              Forces explicit branching and revision on genuinely hard problems.
+              Overkill for routine work.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">firecrawl</span></div>
+            <p class="tool-desc">
+              Reaches pages a normal fetch can't — sites that need a browser to
+              render, whole-site crawls, structured extraction.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name"><span class="mono">github</span></div>
+            <p class="tool-desc">
+              Multi-step GitHub work in one flow. For single lookups the command
+              line is faster.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">playwright</span> &middot;
+              <span class="mono">chrome_devtools</span>
+            </div>
+            <p class="tool-desc">
+              Driving a real browser, and inspecting a live page.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">YouTube</span> &middot;
+              <span class="mono">Reddit</span>
+            </div>
+            <p class="tool-desc">
+              Video transcripts and statistics; practitioner opinion with full
+              thread context.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Direct</h3>
+        <div class="tools">
+          <div class="tool">
+            <div class="tool-name"><span class="mono">nexus-local</span></div>
+            <p class="tool-desc">
+              Your cross-project memory. Ask it before asking you to re-explain
+              something you've already covered elsewhere.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">claude-in-chrome</span>
+            </div>
+            <p class="tool-desc">
+              Drives your actual Chrome browser — clicking, filling forms,
+              reading console output.
+            </p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">Google Workspace</span>
+            </div>
+            <p class="tool-desc">Gmail, Calendar and Drive.</p>
+          </div>
+          <div class="tool">
+            <div class="tool-name">
+              <span class="mono">Canva</span> &middot;
+              <span class="mono">Hugging Face</span>
+            </div>
+            <p class="tool-desc">
+              Design files; open-source models and datasets.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Three things worth deciding</h2>
+      <p>Loose ends from today's upgrade to version 1.2.</p>
+    </div>
+    <div class="callout">
+      <h3>Open items</h3>
+      <ul>
+        <li>
+          <strong
+            >The <span class="mono">teach</span> collision is resolved.</strong
+          >
+          Your own teaching-mode command was removed on 6 August, leaving Matt
+          Pocock's <span class="mono">/teach</span> skill as the only one. Note
+          the two did different jobs — yours debriefed the session you'd just
+          had; this one teaches a concept across sessions. Backup kept at
+          <span class="mono"
+            >~/.claude/backups/teach-command-removed-20260806.md</span
+          >.
+        </li>
+        <li>
+          <strong
+            ><span class="mono">learning-workspace</span> is a
+            duplicate.</strong
+          >
+          It's the same skill now shipping as <span class="mono">/teach</span>,
+          under an older name. Safe to delete once you're happy with the plugin
+          version.
+        </li>
+        <li>
+          <strong>Three retired skills.</strong> <span class="mono">qa</span>,
+          <span class="mono">design-an-interface</span> and
+          <span class="mono">request-refactor-plan</span> were deleted upstream.
+          They still work, but they're frozen — and your global rules still
+          point at <span class="mono">/qa</span> as though it were current.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      Generated 6 August 2026 from what is actually installed — skill
+      descriptions read from disk, not recalled.
+    </p>
+    <p>
+      Pocock skills: plugin <span class="mono">mattpocock-skills</span> 1.2.2,
+      updating to 1.2.3 when the marketplace refreshes. Your own skills and
+      commands live in <span class="mono">~/.claude/</span>. Backup of the
+      pre-upgrade state:
+      <span class="mono"
+        >~/.claude/backups/skills-pre-mattpocock-1.2-20260806</span
+      >.
+    </p>
+  </footer>
+</div>

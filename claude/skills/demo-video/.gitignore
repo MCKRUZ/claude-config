@@ -1,0 +1,21 @@
+# Output files
+output/
+*.gif
+*.mp4
+*.webm
+*.png
+!templates/*.png
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Dependencies
+node_modules/
+package-lock.json
+scripts/node_modules/
+scripts/package-lock.json
+
+# Claude Code
+.claude/memory/
+CLAUDE.local.md

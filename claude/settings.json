@@ -1,0 +1,381 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "TRACE_TO_LANGFUSE": "true",
+    "LANGFUSE_PUBLIC_KEY": "pk-lf-local-claude-code",
+    "LANGFUSE_HOST": "https://langfuse.bablyon.synology.me",
+    "CLAUDE_CODE_EFFORT_LEVEL": "high",
+    "CLAUDE_HOOK_PROFILE": "standard",
+    "CLAUDE_DISABLED_HOOKS": "ollama-delegate,kill-mcp-children"
+  },
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "Bash(dotnet *)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(ng *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(az *)",
+      "Bash(bicep *)",
+      "Bash(pwsh *)",
+      "Bash(python *)",
+      "Bash(py *)",
+      "Bash(pytest *)",
+      "Bash(ssh *)",
+      "Bash(claude *)",
+      "Bash(cd *)",
+      "Bash(bash *)",
+      "Bash(node *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(sed *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(echo *)",
+      "Bash(printf *)",
+      "Bash(test *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "mcp__bifrost__*",
+      "mcp__nexus-local__*",
+      "mcp__mcp-unity__*"
+    ],
+    "deny": [
+      "Read(.env*)",
+      "Read(*.env)",
+      "Read(secrets/**)",
+      "Read(appsettings.*.json)",
+      "Bash(rm -rf *)",
+      "Bash(wget *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(pwsh * Invoke-WebRequest *)",
+      "Bash(pwsh * Invoke-RestMethod *)",
+      "Bash(pwsh * iwr *)",
+      "Bash(pwsh * irm *)"
+    ]
+  },
+  "model": "opusplan",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/communication-style-inject.mjs\"",
+            "statusMessage": "Loading communication style"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/hooks/nexus-user-prompt-submit.mjs\"",
+            "timeout": 5000,
+            "statusMessage": "Nexus: checking prior decisions"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-start.ps1\"",
+            "timeout": 10000
+          },
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-end.ps1\"",
+            "timeout": 10000,
+            "statusMessage": "Ensuring today's session file exists"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/packages/cli/dist/index.js\" sync --quiet --graceful",
+            "timeout": 15000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --experimental-sqlite \"C:\\Users\\kruz7\\.claude\\hooks\\nexus-session-start.mjs\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/nvm4w/nodejs/node.exe\" \"C:/Users/kruz7/.claude/hooks/context-mode-cache-heal.mjs\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/quality-gates/git-safety.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/quality-gates/config-protection.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/skill-switchboard/switchboard.ps1\"",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/strategic-compact/suggest-compact.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(git push*)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before pushing, list the commits that will be pushed and remind the user to review changes."
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/pre-compact.ps1\"",
+            "timeout": 10000
+          },
+          {
+            "type": "prompt",
+            "prompt": "Before compaction: (1) update MEMORY.md (current work + next steps); (2) fill today's session .tmp in ~/.claude/sessions/ — populate the Request, Investigated, Learned, Completed, and Next Steps sections with this session's actual content (replace the empty <!-- --> placeholders, do not leave them blank)."
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Context was just compacted. Re-orient yourself:\n1. Read your project's MEMORY.md (path is in the auto memory section of your system instructions) for current work state and next steps.\n2. Check the task list (TaskList) for any in-progress tasks.\n3. Review your .claude/rules/ files if working in a specific domain.\nDo NOT announce this re-orientation to the user â€” just resume working seamlessly."
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-summarize.ps1\"",
+            "timeout": 10000
+          },
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-end.ps1\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/packages/cli/dist/index.js\" hook post-session --quiet",
+            "timeout": 60000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/Users/kruz7/AppData/Local/Programs/Python/Python313/python.exe\" \"C:/Users/kruz7/.claude/hooks/langfuse_hook.py\"",
+            "timeout": 120000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py \"C:/Users/kruz7/.claude/hooks/semgrep-async-scan.py\"",
+            "timeout": 15000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/c/Users/kruz7/.claude/hooks/auto-format.sh\"",
+            "timeout": 30000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/save-observation.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --experimental-sqlite \"C:\\Users\\kruz7\\.claude\\hooks\\nexus-post-tool-use.mjs\"",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/c/Users/kruz7/.claude/context-governor/dispatcher.sh\""
+  },
+  "enabledPlugins": {
+    "deep-project@piercelamb-plugins": true,
+    "deep-plan@piercelamb-plugins": true,
+    "deep-implement@piercelamb-plugins": true,
+    "code-simplifier@claude-plugins-official": true,
+    "claude-hud@claude-hud": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "semgrep@claude-plugins-official": false,
+    "context-mode@context-mode": true,
+    "wt-agent-hooks@wt-local": true,
+    "mck-scaffold@mck-scaffold": true,
+    "understand-anything@understand-anything": true,
+    "mattpocock-skills@claude-plugins-official": true,
+    "i-have-adhd@i-have-adhd": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "csharp-lsp@claude-plugins-official": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
+    },
+    "context-mode": {
+      "source": {
+        "source": "github",
+        "repo": "mksglu/context-mode"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    },
+    "wt-local": {
+      "source": {
+        "source": "directory",
+        "path": "C:\\Users\\kruz7\\AppData\\Local\\Packages\\Microsoft.IntelligentTerminal_8wekyb3d8bbwe\\LocalCache\\Local\\IntelligentTerminal\\hook-bundle-staging\\claude"
+      }
+    },
+    "mck-scaffold": {
+      "source": {
+        "source": "github",
+        "repo": "MCKRUZ/mck-scaffold"
+      }
+    },
+    "understand-anything": {
+      "source": {
+        "source": "github",
+        "repo": "Egonex-AI/Understand-Anything"
+      }
+    },
+    "i-have-adhd": {
+      "source": {
+        "source": "github",
+        "repo": "ayghri/i-have-adhd"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    },
+    "epic-infographics": {
+      "source": {
+        "source": "github",
+        "repo": "OrRon/EpicInfographics"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "remoteControlAtStartup": true,
+  "crossSessionInbound": "accept",
+  "agentPushNotifEnabled": true,
+  "voiceEnabled": true,
+  "mcpNotes": {
+    "sentry": "Removed 2026-02-09 - Add back when deploying production apps: https://mcp.sentry.dev/mcp",
+    "filesystem": "Removed 2026-02-09 - Built-in Read/Write/Glob/Grep cover file ops, saved ~2-3K tokens",
+    "memory": "Removed 2026-02-09. Replaced by cmem, then agentmemory; agentmemory removed 2026-08-05 (LLM summarize never configured — 3,609 calls, 0 successes, 1 memory stored, so capture never became recall). Session memory now via memory-persistence hooks + Nexus.",
+    "hub-mode": "Replaced mcp-hub with Bifrost MCP gateway on mac-mini:8090 (2026-03-26). Nexus runs direct as nexus-local. Context Lens removed (Nexus handles analytics).",
+    "config-location": "MCP servers are managed in ~/.claude.json via 'claude mcp add/remove', NOT in settings.json"
+  }
+}

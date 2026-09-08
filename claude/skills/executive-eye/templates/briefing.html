@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--
+  Executive Eye — briefing template.
+  Starting point for Render. Replace the placeholder content; keep the
+  consequence-ordered structure: hero (bottom line) → ask → key points →
+  risks/gaps → recessed detail. Swap the palette/fonts per chosen aesthetic
+  (see references/css-patterns.md). Stay in the executive band.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Briefing — REPLACE WITH DOC TITLE</title>
+<style>
+  :root {
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+    --bg: #f7f7f5; --surface: #fff; --surface-elevated: #fff;
+    --border: rgba(15,23,42,.10); --text: #14181f; --text-dim: #5b6472;
+    --accent: #1d4ed8; --accent-dim: rgba(29,78,216,.08);
+    --ok:#15803d; --ok-dim:rgba(21,128,61,.10);
+    --warn:#b45309; --warn-dim:rgba(180,83,9,.10);
+    --risk:#b91c1c; --risk-dim:rgba(185,28,28,.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0e1116; --surface:#161b22; --surface-elevated:#1b2230;
+      --border:rgba(255,255,255,.08); --text:#e6edf3; --text-dim:#9aa4b2;
+      --accent:#60a5fa; --accent-dim:rgba(96,165,250,.14);
+      --ok:#4ade80; --ok-dim:rgba(74,222,128,.14);
+      --warn:#fbbf24; --warn-dim:rgba(251,191,36,.14);
+      --risk:#f87171; --risk-dim:rgba(248,113,113,.14);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:48px 24px; background:var(--bg); color:var(--text);
+    font-family:var(--font-body); line-height:1.6; overflow-wrap:break-word; }
+  .wrap { max-width:860px; margin:0 auto; }
+  .doc-meta { font-family:var(--font-mono); font-size:11px; letter-spacing:1.5px;
+    text-transform:uppercase; color:var(--text-dim); margin-bottom:16px; }
+  .label { font-family:var(--font-mono); font-size:10px; font-weight:600;
+    text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:8px; }
+  .card { background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:20px 24px; margin:16px 0; }
+  .card--hero { background:color-mix(in srgb, var(--surface) 90%, var(--accent) 10%);
+    border-color:color-mix(in srgb, var(--border) 40%, var(--accent) 60%);
+    box-shadow:0 6px 28px rgba(15,23,42,.10); padding:28px 32px; }
+  .bottom-line { font-size:clamp(1.4rem,2.6vw,2rem); font-weight:700; line-height:1.25; margin:0; }
+  .card--elevated { background:var(--surface-elevated); box-shadow:0 2px 10px rgba(15,23,42,.06); }
+  .card--recessed { background:color-mix(in srgb, var(--bg) 60%, var(--surface) 40%);
+    box-shadow:inset 0 1px 3px rgba(15,23,42,.05); color:var(--text-dim); }
+  .ask { display:flex; gap:14px; align-items:flex-start; border-left:4px solid var(--accent);
+    background:var(--accent-dim); border-radius:0 12px 12px 0; padding:18px 22px; margin:20px 0; }
+  .ask__label { font-family:var(--font-mono); font-size:11px; font-weight:600;
+    text-transform:uppercase; letter-spacing:1.5px; color:var(--accent); white-space:nowrap; }
+  .ask__body { font-size:1.05rem; font-weight:600; }
+  .ask__meta { color:var(--text-dim); font-weight:400; font-size:.9rem; }
+  .keypoints { display:grid; gap:14px; grid-template-columns:1fr 1fr; }
+  .keypoints > * { min-width:0; }
+  @media (max-width:720px) { .keypoints { grid-template-columns:1fr; } }
+  .keypoints h3 { margin:0 0 6px; font-size:1.02rem; }
+  .keypoints p { margin:0; color:var(--text-dim); font-size:.95rem; }
+  .pill { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
+    padding:3px 10px; border-radius:999px; }
+  .pill--ok{background:var(--ok-dim);color:var(--ok);}
+  .pill--warn{background:var(--warn-dim);color:var(--warn);}
+  .pill--risk{background:var(--risk-dim);color:var(--risk);}
+  .pill--gap{background:var(--border);color:var(--text-dim);}
+  ul.tight { margin:8px 0 0; padding-left:18px; }
+  ul.tight li { margin:6px 0; }
+  details.card summary { cursor:pointer; list-style:none; }
+  details.card summary::-webkit-details-marker { display:none; }
+  img, svg, table { max-width:100%; }
+  table { width:100%; border-collapse:collapse; }
+  td, th { word-break:break-word; text-align:left; padding:6px 8px; border-bottom:1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="doc-meta">Briefing · REPLACE: doc type · for REPLACE: reader</div>
+
+  <!-- 1. HERO — the single bottom line -->
+  <div class="card card--hero">
+    <div class="label" style="color:var(--accent)">Bottom line</div>
+    <p class="bottom-line">REPLACE: the one thing the reader must take away, stated plainly.</p>
+  </div>
+
+  <!-- 2. THE ASK -->
+  <div class="ask">
+    <span class="ask__label">Decision&nbsp;needed</span>
+    <div>
+      <div class="ask__body">REPLACE: what must be decided or done.</div>
+      <div class="ask__meta">Owner: REPLACE · By: REPLACE</div>
+    </div>
+  </div>
+
+  <!-- 3. KEY POINTS — ranked; promote the critical to card--elevated -->
+  <div class="label">What matters</div>
+  <div class="keypoints">
+    <div class="card card--elevated">
+      <h3>REPLACE: most important point</h3>
+      <p>REPLACE: one or two sentences. Faithful to source; no invented facts.</p>
+    </div>
+    <div class="card">
+      <h3>REPLACE: supporting point</h3>
+      <p>REPLACE.</p>
+    </div>
+    <div class="card">
+      <h3>REPLACE: supporting point</h3>
+      <p>REPLACE.</p>
+    </div>
+    <div class="card">
+      <h3>REPLACE: supporting point</h3>
+      <p>REPLACE.</p>
+    </div>
+  </div>
+
+  <!-- 4. RISKS / OPEN QUESTIONS / GAPS -->
+  <div class="card">
+    <div class="label">Risks &amp; open questions</div>
+    <ul class="tight">
+      <li><span class="pill pill--risk">Risk</span> REPLACE: severity + what could go wrong (preserve any hedge).</li>
+      <li><span class="pill pill--warn">Watch</span> REPLACE: open question.</li>
+      <li><span class="pill pill--gap">Not stated</span> REPLACE: decision-relevant fact missing from the source — shown as a gap, never invented.</li>
+    </ul>
+  </div>
+
+  <!-- 5. RECESSED DETAIL — drill-in only -->
+  <details class="card card--recessed">
+    <summary class="label">Full detail</summary>
+    <div style="margin-top:12px">
+      REPLACE: supporting detail, methodology, appendix. Everything the reader
+      <em>might</em> want but doesn't need up front.
+    </div>
+  </details>
+
+</div>
+</body>
+</html>

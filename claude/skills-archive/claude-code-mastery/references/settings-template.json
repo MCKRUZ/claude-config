@@ -1,0 +1,310 @@
+{
+  "_readme": "Copy this to ~/.claude/settings.json and replace all <PLACEHOLDER> values. MCP servers go in ~/.claude.json via 'claude mcp add', NOT here.",
+
+  "model": "sonnet",
+
+  "env": {
+    "CLAUDE_CODE_EFFORT_LEVEL": "high",
+    "CLAUDE_HOOK_PROFILE": "standard",
+    "CLAUDE_DISABLED_HOOKS": "",
+
+    "_comment_langfuse": "Optional: Langfuse observability. Set TRACE_TO_LANGFUSE=true and provide credentials.",
+    "TRACE_TO_LANGFUSE": "false",
+    "LANGFUSE_PUBLIC_KEY": "<YOUR_LANGFUSE_PUBLIC_KEY>",
+    "LANGFUSE_SECRET_KEY": "<YOUR_LANGFUSE_SECRET_KEY>",
+    "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",
+
+    "_comment_github": "Optional: GitHub PAT for gh CLI operations requiring auth.",
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_GITHUB_PAT>",
+
+    "_comment_nexus": "Optional: Path to Nexus CLI for cross-project memory sync.",
+    "NEXUS_CLI_PATH": "<PATH_TO_NEXUS_PACKAGES_CLI_DIST_INDEX_JS>",
+
+    "_comment_semgrep": "Optional: Semgrep App token for cloud-connected SAST.",
+    "SEMGREP_APP_TOKEN": "<YOUR_SEMGREP_TOKEN>"
+  },
+
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "Bash(dotnet *)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(ng *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(az *)",
+      "Bash(bicep *)",
+      "Bash(pwsh *)",
+      "Bash(python *)",
+      "Bash(py *)",
+      "Bash(pytest *)",
+      "Bash(ssh *)",
+      "Bash(claude *)",
+      "mcp__bifrost__*",
+      "mcp__nexus-local__*",
+      "mcp__mcp-unity__*"
+    ],
+    "deny": [
+      "Read(.env*)",
+      "Read(*.env)",
+      "Read(secrets/**)",
+      "Read(appsettings.*.json)",
+      "Bash(rm -rf *)",
+      "Bash(wget *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(pwsh * Invoke-WebRequest *)",
+      "Bash(pwsh * Invoke-RestMethod *)",
+      "Bash(pwsh * iwr *)",
+      "Bash(pwsh * irm *)"
+    ]
+  },
+
+  "hooks": {
+    "_readme": "Replace <CLAUDE_HOME> with your actual ~/.claude path (e.g. C:/Users/yourname/.claude). Alternatively, run install.ps1 which installs hooks and resolves paths automatically.",
+
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/memory-persistence/session-start.ps1\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/mcp-health/health-check.ps1\"",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
+
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/skill-switchboard/switchboard.ps1\"",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/strategic-compact/suggest-compact.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash(git push*)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before pushing, list the commits that will be pushed and remind the user to review changes."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/quality-gates/git-safety.ps1\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/quality-gates/dev-server-block.ps1\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/quality-gates/conventional-commits.ps1\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/quality-gates/secret-scanner.ps1\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/quality-gates/config-protection.ps1\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/quality-gates/tdd-gate.ps1\""
+          }
+        ]
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/auto-format/format-on-edit.ps1\"",
+            "timeout": 30000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/memory-persistence/save-observation.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/quality-gates/console-warn.ps1\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/memory-persistence/pre-compact.ps1\"",
+            "timeout": 10000
+          },
+          {
+            "type": "prompt",
+            "prompt": "Before compaction: update MEMORY.md (current work + next steps), update today's session .tmp file, and save reusable patterns via mcp__cmem__save_lesson if any."
+          }
+        ]
+      }
+    ],
+
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Context was just compacted. Re-orient yourself:\n1. Read your project's MEMORY.md for current work state and next steps.\n2. Check the task list (TaskList) for any in-progress tasks.\n3. Review your .claude/rules/ files if working in a specific domain.\nDo NOT announce this re-orientation to the user — just resume working seamlessly."
+          }
+        ]
+      }
+    ],
+
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/kill-mcp-children.ps1\"",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"<CLAUDE_HOME>/hooks/memory-persistence/session-end.ps1\"",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  },
+
+  "enabledPlugins": {
+    "_readme": "Install plugins via 'claude plugins add <name>@<marketplace>'. See SETUP.md for marketplace config.",
+    "deep-project@piercelamb-plugins": true,
+    "deep-plan@piercelamb-plugins": true,
+    "deep-implement@piercelamb-plugins": true,
+    "code-simplifier@claude-plugins-official": true,
+    "claude-hud@claude-hud": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "semgrep@claude-plugins-official": true,
+    "context-mode@context-mode": true
+  },
+
+  "extraKnownMarketplaces": {
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
+    },
+    "context-mode": {
+      "source": {
+        "source": "github",
+        "repo": "mksglu/context-mode"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    },
+    "piercelamb-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "piercelamb/claude-plugins"
+      }
+    }
+  },
+
+  "alwaysThinkingEnabled": true,
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true,
+  "voiceEnabled": true,
+
+  "mcpNotes": {
+    "config-location": "MCP servers are managed in ~/.claude.json via 'claude mcp add/remove', NOT in settings.json",
+    "bifrost": "Bifrost MCP gateway — proxies context7, sequential_thinking, microsoft_learn, YouTube, github, firecrawl, playwright, chrome_devtools, Reddit",
+    "nexus-local": "Nexus cross-project intelligence — run 'nexus install' from the Nexus repo",
+    "sentry": "Add when deploying production apps: https://mcp.sentry.dev/mcp"
+  }
+}

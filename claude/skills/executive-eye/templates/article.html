@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!--
+  Executive Eye — editorial article template.
+  Starting point for Render's EDITORIAL mode (articles, essays, thought-leadership).
+  Keep the narrative whole and in order; add scannability on top: TL;DR box,
+  sticky TOC, pull quotes, stat cards, styled tables, captioned figures.
+  Swap palette/fonts per chosen aesthetic (see references/css-patterns.md).
+  Do NOT add an "ask"/owner/deadline — this is an essay, not a briefing.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REPLACE WITH ARTICLE TITLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-body: 'Source Serif 4', Georgia, serif;     /* editorial: serif body reads as a feature */
+    --font-head: 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+    --bg: #faf9f6; --surface: #fff; --border: rgba(28,25,23,.12); --border-bright: rgba(28,25,23,.22);
+    --text: #1c1917; --text-dim: #6b6560; --accent: #b8431f; --accent-dim: rgba(184,67,31,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#15130f; --surface:#1d1a16; --border:rgba(255,255,255,.10); --border-bright:rgba(255,255,255,.2);
+      --text:#ece6dd; --text-dim:#a39b8f; --accent:#ee7b52; --accent-dim:rgba(238,123,82,.12);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:56px 24px; background:var(--bg); color:var(--text);
+    font-family:var(--font-body); line-height:1.7; overflow-wrap:break-word; }
+  h1, h2, h3, .dek, .label, .toc, .article-meta, .tldr, .stat { font-family: var(--font-head); }
+
+  .layout { display:grid; grid-template-columns:220px minmax(0,720px); gap:48px;
+    justify-content:center; align-items:start; }
+  @media (max-width:980px){ .layout{ grid-template-columns:1fr; max-width:720px; margin:0 auto; } .toc{ position:static !important; margin-bottom:8px; } }
+
+  /* Sticky TOC */
+  .toc { position:sticky; top:32px; font-size:.85rem; }
+  .toc__label { font-family:var(--font-mono); font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:10px; }
+  .toc a { display:block; color:var(--text-dim); text-decoration:none; padding:5px 0 5px 12px;
+    border-left:2px solid transparent; line-height:1.3; }
+  .toc a:hover, .toc a.active { color:var(--accent); border-left-color:var(--accent); }
+
+  /* Header */
+  .article-meta { font-family:var(--font-mono); font-size:12px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:18px; }
+  h1 { font-size:clamp(2rem,5vw,3rem); line-height:1.12; font-weight:800; letter-spacing:-.02em; margin:0; }
+  .dek { font-size:clamp(1.15rem,2.4vw,1.5rem); line-height:1.4; color:var(--text-dim); font-weight:400; margin:.5em 0 1.4em; }
+
+  /* TL;DR */
+  .tldr { background:var(--accent-dim); border:1px solid color-mix(in srgb,var(--border) 50%,var(--accent) 50%);
+    border-radius:14px; padding:24px 28px; margin:28px 0 44px; }
+  .tldr__label { font-family:var(--font-mono); font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:1.5px; color:var(--accent); margin-bottom:12px; }
+  .tldr ul { margin:0; padding-left:20px; } .tldr li { margin:9px 0; line-height:1.55; }
+
+  /* Body */
+  .article p { font-size:1.12rem; line-height:1.75; margin:0 0 1.2em; }
+  .article h2 { font-size:clamp(1.5rem,3vw,2rem); margin:2.4em 0 .5em; line-height:1.2; scroll-margin-top:32px; }
+  .article h3 { font-size:1.2rem; margin:1.8em 0 .4em; }
+  .article strong { font-weight:600; }
+  .article a { color:var(--accent); }
+
+  .pullquote { font-family:var(--font-head); font-size:clamp(1.4rem,3vw,1.85rem); line-height:1.3; font-weight:600;
+    border-left:4px solid var(--accent); padding:6px 0 6px 24px; margin:34px 0; color:var(--text); }
+
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px; margin:30px 0; }
+  .stat { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .stat__num { font-size:clamp(2rem,5vw,3rem); font-weight:800; line-height:1; color:var(--accent); }
+  .stat__label { font-size:.9rem; color:var(--text-dim); margin-top:8px; line-height:1.4; }
+  .stat__src { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); margin-top:10px; }
+
+  figure { margin:36px 0; }
+  figure img { width:100%; border-radius:12px; border:1px solid var(--border); display:block; }
+  figcaption { font-size:.88rem; color:var(--text-dim); margin-top:10px; line-height:1.5; }
+  .fig-placeholder { display:grid; place-items:center; text-align:center; min-height:180px;
+    background:color-mix(in srgb,var(--bg) 50%,var(--surface) 50%); border:1px dashed var(--border-bright);
+    border-radius:12px; color:var(--text-dim); font-family:var(--font-mono); font-size:12px; padding:24px; }
+
+  table { width:100%; border-collapse:collapse; margin:28px 0; font-family:var(--font-head); font-size:.96rem; }
+  th, td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:top; }
+  thead th { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-dim); }
+  tbody tr:hover { background:var(--accent-dim); }
+
+  .closing { font-family:var(--font-head); font-size:clamp(1.5rem,3.4vw,2.1rem); line-height:1.25; font-weight:700;
+    margin:48px 0 0; padding-top:32px; border-top:1px solid var(--border); }
+  img, svg, table { max-width:100%; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sticky TOC — one entry per H2 -->
+  <nav class="toc" aria-label="Sections">
+    <div class="toc__label">Contents</div>
+    <a href="#s1">REPLACE: Section 1</a>
+    <a href="#s2">REPLACE: Section 2</a>
+    <a href="#s3">REPLACE: Section 3</a>
+  </nav>
+
+  <article class="article">
+    <div class="article-meta">REPLACE: Category · 14 min read · June 2026</div>
+    <h1>REPLACE: Article title</h1>
+    <p class="dek">REPLACE: one-line standfirst stating the thesis.</p>
+
+    <!-- Honor the author's existing "executive read" if present; else generate -->
+    <aside class="tldr">
+      <div class="tldr__label">Executive read</div>
+      <ul>
+        <li>REPLACE: thesis-first bullet.</li>
+        <li>REPLACE: key point.</li>
+        <li>REPLACE: key point.</li>
+        <li>REPLACE: the honest caveat.</li>
+      </ul>
+    </aside>
+
+    <h2 id="s1">REPLACE: Section 1 heading</h2>
+    <p>REPLACE: prose, in the author's voice and original order. Faithful — no invented facts, hedges preserved.</p>
+
+    <blockquote class="pullquote">REPLACE: a quotable line lifted from the prose for emphasis.</blockquote>
+
+    <h2 id="s2">REPLACE: Section 2 heading</h2>
+    <p>REPLACE: prose.</p>
+
+    <!-- Standout numbers become stat cards -->
+    <div class="stats">
+      <div class="stat"><div class="stat__num">88%</div><div class="stat__label">REPLACE: what the number means</div><div class="stat__src">Source</div></div>
+      <div class="stat"><div class="stat__num">40%</div><div class="stat__label">REPLACE</div><div class="stat__src">Source</div></div>
+    </div>
+
+    <!-- Referenced image: real <img> if available, else labeled placeholder (never silently dropped) -->
+    <figure>
+      <div class="fig-placeholder">[ FIGURE: REPLACE with image path when available ]</div>
+      <figcaption>REPLACE: caption (use the source alt text if no caption exists).</figcaption>
+    </figure>
+
+    <h2 id="s3">REPLACE: Section 3 heading</h2>
+    <p>REPLACE: prose.</p>
+
+    <table>
+      <thead><tr><th>REPLACE</th><th>REPLACE</th><th>REPLACE</th></tr></thead>
+      <tbody>
+        <tr><td>REPLACE</td><td>REPLACE</td><td>REPLACE</td></tr>
+      </tbody>
+    </table>
+
+    <p class="closing">REPLACE: the strong closing line / kicker, given room to land.</p>
+  </article>
+</div>
+
+<script>
+  // Highlight the active TOC entry on scroll.
+  const links = [...document.querySelectorAll('.toc a')];
+  const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const a = map.get(e.target.id);
+      if (a && e.isIntersecting) { links.forEach(l => l.classList.remove('active')); a.classList.add('active'); }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('.article h2[id]').forEach(h => obs.observe(h));
+</script>
+</body>
+</html>

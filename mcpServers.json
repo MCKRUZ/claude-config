@@ -1,0 +1,123 @@
+{
+  "nexus-local": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "C:\\Users\\kruz7\\OneDrive\\Documents\\Code Repos\\MCKRUZ\\Nexus\\packages\\mcp\\dist\\index.js"
+    ],
+    "env": {}
+  },
+  "context7": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@upstash/context7-mcp@latest"
+    ],
+    "env": {}
+  },
+  "sequential-thinking": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-sequential-thinking"
+    ],
+    "env": {}
+  },
+  "playwright": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@playwright/mcp@latest"
+    ],
+    "env": {}
+  },
+  "chrome-devtools": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "chrome-devtools-mcp@latest",
+      "--slim",
+      "--headless"
+    ],
+    "env": {}
+  },
+  "firecrawl": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "firecrawl-mcp"
+    ],
+    "env": {
+      "FIRECRAWL_API_URL": "http://bablyon:3002"
+    }
+  },
+  "youtube": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\launch.js",
+      "--secret",
+      "YOUTUBE_API_KEY",
+      "--",
+      "npx",
+      "-y",
+      "youtube-data-mcp-server"
+    ],
+    "env": {}
+  },
+  "reddit-apify": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\launch.js",
+      "--secret",
+      "APIFY_TOKEN",
+      "--",
+      "node",
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\reddit-apify.js"
+    ],
+    "env": {}
+  },
+  "microsoft-learn": {
+    "type": "http",
+    "url": "https://learn.microsoft.com/api/mcp"
+  },
+  "searxng": {
+    "type": "http",
+    "url": "http://matthews-mac-mini.tail2800e3.ts.net:3080/mcp"
+  },
+  "github": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\launch.js",
+      "--secret",
+      "GITHUB_PERSONAL_ACCESS_TOKEN",
+      "--",
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\github-mcp-server\\github-mcp-server.exe",
+      "stdio"
+    ],
+    "env": {}
+  },
+  "donsetch": {
+    "type": "stdio",
+    "command": "C:\\Users\\kruz7\\tools\\donsetch\\donsetch.exe",
+    "args": [
+      "mcp"
+    ],
+    "env": {}
+  },
+  "comfy-mcp": {
+    "type": "stdio",
+    "command": "C:\\Users\\kruz7\\.local\\bin\\comfy-mcp.exe",
+    "args": [],
+    "env": {
+      "COMFY_BIN": "C:\\Users\\kruz7\\.local\\bin\\comfy.exe"
+    }
+  }
+}

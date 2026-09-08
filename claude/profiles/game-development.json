@@ -1,0 +1,66 @@
+{
+  "name": "game-development",
+  "description": "Game development profile for Unity, Unreal, and Godot projects. Covers game systems design, shader programming, 3D modeling, GPU profiling, NVIDIA SDK integration, and AI-driven NPC/character systems. Includes NVIDIA tools on D:\\NVIDIA\\ and game dev skills on D:\\GameDev\\skills\\.",
+  "projects": [
+    "dnd-game",
+    "guild-hand"
+  ],
+  "agents": {
+    "activate": [
+      "_archived/design/ui-designer.md",
+      "_archived/design/visual-storyteller.md",
+      "_archived/design/ux-researcher.md",
+      "engineering/rapid-prototyper.md",
+      "engineering/frontend-developer.md"
+    ],
+    "base_active": [
+      "matts-custom/architect.md",
+      "matts-custom/build-error-resolver.md",
+      "matts-custom/security-reviewer.md",
+      "matts-custom/planner.md",
+      "engineering/ai-engineer.md",
+      "testing/performance-benchmarker.md",
+      "matts-custom/tdd-guide.md"
+    ]
+  },
+  "skills": {
+    "key_skills": [
+      "game-developer",
+      "shader-techniques",
+      "3d-modeling",
+      "deep-plan",
+      "deep-implement",
+      "visual-explainer",
+      "tdd-workflow",
+      "security-review"
+    ]
+  },
+  "tech_stacks": {
+    "dnd-game": "Unity 6 LTS, C#, Assembly Definitions, ScriptableObjects, MCP-Unity bridge, NVIDIA DLSS, PhysX (built-in)",
+    "general-game-dev": "NVIDIA RTX Kit (RTXNS, RTXNTC, RTXMG, RTXGI, RTXDI, RTXCR), NVIDIA ACE (Nemotron, Riva ASR, Audio2Face-3D), NVIGI SDK, Nsight profiling suite, Streamline SDK, PhysX 5"
+  },
+  "nvidia_tools": {
+    "install_root": "D:\\NVIDIA",
+    "rtx_kit": "D:\\NVIDIA\\RTX-Kit (Rtxns, Rtxntc, RTXMG, Rtxgi, RTXDI, Rtxcr)",
+    "physx": "D:\\NVIDIA\\PhysX",
+    "sdks": "D:\\NVIDIA\\SDKs (NVIGI-Core, Streamline, DLSS, Reflex)",
+    "ace_models": "D:\\NVIDIA\\ACE-Models (Nemotron 4B/9B, Riva ASR, Audio2Face-3D)",
+    "nsight": "D:\\NVIDIA\\Nsight (Systems, Graphics, Compute)",
+    "cuda": "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.9"
+  },
+  "skills_repos": {
+    "install_root": "D:\\GameDev\\skills",
+    "unity-claude-skills": "Nice-Wolf-Studio/unity-claude-skills — 35 Unity 6.3 LTS skills",
+    "cc-plugin-unity-gamedev": "tjboudreaux/cc-plugin-unity-gamedev — 21 Unity skills (Addressables, NavMesh, Cinemachine)",
+    "jeffallan-claude-skills": "Jeffallan/claude-skills — game-developer skill with Unity patterns",
+    "claude-skill-registry": "majiayu000/claude-skill-registry — shader-techniques + 3d-modeling",
+    "CCUF": "wooson00308/CCUF — Unity guardrails and safety framework",
+    "claude-unity-skill": "Eugen24/claude-unity-skill — asset/project breakage prevention",
+    "agent-team-plugins": "DavinciDreams/Agent-Team-Plugins — 3D design pipeline (9 skills, 7 agents)",
+    "claude-code-game-studios": "Donchitos/Claude-Code-Game-Studios — 49 agents, 72 skills",
+    "claude-code-game-development": "HermeticOrmus/claude-code-game-development — game dev patterns",
+    "claude-code-for-unity3d": "yimengfan/claude-code-for-unity3d — hackathon-winning Unity config",
+    "unity-mcp-ivan": "IvanMurzak/Unity-MCP — 100+ Unity Editor tools via MCP"
+  },
+  "notes": "GPU: RTX 5090 (32GB VRAM), CUDA 12.9. NVIDIA standalone tools (Nsight Systems, Nsight Graphics, DLSS SDK, Streamline SDK, Reflex SDK, ACE models) require manual download from developer.nvidia.com with free Developer Program account. GitHub repos are cloned to D:\\NVIDIA\\ and D:\\GameDev\\skills\\. VS Code extensions (Nsight Copilot) install via VS Code marketplace. For Unity DLSS integration, use the NVIDIA package in Unity Package Manager."
+}

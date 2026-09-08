@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Dependencies for demo-video skill scripts",
+  "dependencies": {
+    "playwright": "^1.58.0"
+  }
+}

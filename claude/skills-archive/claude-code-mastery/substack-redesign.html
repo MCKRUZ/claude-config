@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Context Engineering — Substack Redesign Guide v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&family=Inter:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* matthewkruczek.ai brand tokens */
+    --mk-bg: #0a0a0b;
+    --mk-bg-secondary: #111113;
+    --mk-bg-tertiary: #18181b;
+    --mk-gold: #d4a853;
+    --mk-gold-dim: #b8923f;
+    --mk-gold-glow: rgba(212, 168, 83, 0.15);
+    --mk-text: #fafafa;
+    --mk-text-secondary: #a1a1aa;
+    --mk-text-muted: #71717a;
+    --mk-border: rgba(255, 255, 255, 0.06);
+
+    /* Guide layout tokens */
+    --bg: #FAFBFC;
+    --surface: #FFFFFF;
+    --text: #0F172A;
+    --text-secondary: #475569;
+    --border: #E2E8F0;
+    --success: #059669;
+    --warning: #D97706;
+    --danger: #DC2626;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header — styled like matthewkruczek.ai */
+  .header { background: var(--mk-bg); color: var(--mk-text); padding: 48px 0 40px; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(212,168,83,0.06) 0%, transparent 70%); }
+  .header .container { position: relative; }
+  .header .label { font-family: 'Source Sans 3', sans-serif; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; color: var(--mk-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+  .header .label::before { content: ''; width: 24px; height: 1px; background: var(--mk-gold); }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; margin-bottom: 8px; }
+  .header .subtitle { font-size: 16px; color: var(--mk-text-secondary); font-family: 'Source Sans 3', sans-serif; }
+
+  /* Brand comparison bar */
+  .brand-bar { background: var(--mk-bg-secondary); border-bottom: 1px solid var(--mk-border); padding: 20px 0; }
+  .brand-bar .inner { display: flex; gap: 40px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .brand-stat { text-align: center; }
+  .brand-stat .val { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--mk-gold); font-weight: 700; }
+  .brand-stat .lbl { font-size: 11px; color: var(--mk-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* Sections */
+  .section { padding: 40px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; color: var(--mk-gold); }
+  .section-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 24px; }
+
+  /* Cards */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .card.recommended { border-color: var(--mk-gold); border-width: 2px; position: relative; }
+  .card.recommended::after { content: 'RECOMMENDED'; position: absolute; top: -10px; right: 16px; background: var(--mk-gold); color: var(--mk-bg); font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 10px; border-radius: 4px; }
+  .card.dark { background: var(--mk-bg); border-color: var(--mk-border); color: var(--mk-text); }
+  .card.dark p { color: var(--mk-text-secondary); }
+  .card.dark h3 { color: var(--mk-gold); }
+  .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 14px; color: var(--text-secondary); }
+
+  /* Color swatches */
+  .swatch-row { display: flex; gap: 16px; margin: 16px 0; align-items: center; flex-wrap: wrap; }
+  .color-pair { text-align: center; }
+  .swatch { width: 48px; height: 48px; border-radius: 10px; border: 1px solid var(--border); }
+  .color-pair .hex { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .color-pair .role { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text); margin-top: 2px; }
+
+  /* Before/After comparison */
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 20px 0; }
+  .comparison-panel { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .comparison-label { padding: 8px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+  .comparison-label.before { background: #FEF2F2; color: var(--danger); }
+  .comparison-label.after { background: #F0FDF4; color: var(--success); }
+
+  /* Mockup */
+  .mockup-frame { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; max-width: 700px; margin: 20px auto; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  .mockup-browser { background: #1e1e1e; padding: 8px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #333; }
+  .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .mockup-url { flex: 1; background: #2a2a2a; border-radius: 4px; padding: 4px 12px; font-size: 12px; color: #999; margin-left: 8px; }
+
+  /* Dark Substack Mockup */
+  .sub-header { padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); background: #0a0a0b; }
+  .sub-logo-area { display: flex; align-items: center; gap: 12px; }
+  .sub-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
+  .sub-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 18px; color: #fafafa; }
+  .sub-nav { display: flex; gap: 20px; font-size: 13px; color: #a1a1aa; font-family: 'Source Sans 3', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; }
+  .sub-btn { padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
+  .sub-hero { padding: 48px 32px; text-align: center; background: #0a0a0b; }
+  .sub-hero h2 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin-bottom: 12px; line-height: 1.3; color: #fafafa; }
+  .sub-hero p { font-size: 15px; color: #a1a1aa; max-width: 520px; margin: 0 auto 20px; line-height: 1.6; font-family: 'Source Sans 3', sans-serif; }
+  .sub-hero .sub-cta { display: inline-block; padding: 10px 28px; border-radius: 24px; font-weight: 600; font-size: 14px; text-decoration: none; }
+  .sub-posts { padding: 0 32px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #0a0a0b; }
+  .sub-post { border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; overflow: hidden; background: #111113; }
+  .sub-post-img { height: 120px; display: flex; align-items: center; justify-content: center; }
+  .sub-post-body { padding: 16px; }
+  .sub-post-body h3 { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; color: #fafafa; }
+  .sub-post-body .meta { font-size: 12px; color: #71717a; }
+  .sub-footer-mock { background: #0a0a0b; border-top: 1px solid rgba(255,255,255,0.06); padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
+  .sub-footer-mock span { font-size: 12px; color: #71717a; }
+
+  /* Settings table */
+  .settings-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .settings-table th { text-align: left; padding: 10px 16px; background: #F8FAFC; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); border-bottom: 2px solid var(--border); }
+  .settings-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .settings-table td:first-child { font-weight: 600; white-space: nowrap; }
+  .settings-table .value { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: #F1F5F9; padding: 2px 8px; border-radius: 4px; }
+
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .check-icon.do { background: #DCFCE7; color: #059669; }
+  .check-icon.dont { background: #FEE2E2; color: #DC2626; }
+  .check-icon.warn { background: #FEF3C7; color: #D97706; }
+
+  /* Sidebar mockup */
+  .sidebar-preview { background: var(--mk-bg); border: 1px solid var(--mk-border); border-radius: 8px; padding: 20px; max-width: 280px; }
+  .sidebar-preview h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mk-text-muted); margin-bottom: 12px; }
+  .sidebar-link { display: block; padding: 6px 0; font-size: 14px; color: var(--mk-gold); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+  /* Alert box */
+  .alert { padding: 16px 20px; border-radius: 8px; font-size: 14px; margin: 16px 0; display: flex; gap: 12px; align-items: flex-start; }
+  .alert.warn { background: #FEF3C7; border: 1px solid #FDE68A; color: #92400E; }
+  .alert.info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+  .alert-icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+
+  @media (max-width: 768px) {
+    .comparison { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+    .sub-posts { grid-template-columns: 1fr; }
+    .header h1 { font-size: 28px; }
+    .brand-bar .inner { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header — matches matthewkruczek.ai aesthetic -->
+<div class="header">
+  <div class="container">
+    <div class="label">Substack Redesign Guide</div>
+    <h1>Context Engineering</h1>
+    <div class="subtitle">Dark + Gold brand alignment with matthewkruczek.ai</div>
+  </div>
+</div>
+
+<!-- Brand token bar -->
+<div class="brand-bar">
+  <div class="inner">
+    <div class="brand-stat"><div class="val">#0a0a0b</div><div class="lbl">Background</div></div>
+    <div class="brand-stat"><div class="val">#d4a853</div><div class="lbl">Accent Gold</div></div>
+    <div class="brand-stat"><div class="val">Playfair Display</div><div class="lbl">Headings</div></div>
+    <div class="brand-stat"><div class="val">Source Sans 3</div><div class="lbl">Body</div></div>
+    <div class="brand-stat"><div class="val">#fafafa</div><div class="lbl">Text</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- 1. Brand Alignment Rationale -->
+<div class="section">
+  <div class="section-title">Why This Matters</div>
+  <div class="section-desc">Your Substack and main site should feel like the same person</div>
+
+  <div class="comparison">
+    <div class="comparison-panel">
+      <div class="comparison-label before">Current Substack</div>
+      <div style="padding: 24px; background: white;">
+        <div class="swatch-row">
+          <div class="color-pair"><div class="swatch" style="background: #FF6719;"></div><div class="hex">#FF6719</div><div class="role">Accent</div></div>
+          <div class="color-pair"><div class="swatch" style="background: #FFFFFF; border: 2px solid #E2E8F0;"></div><div class="hex">#FFFFFF</div><div class="role">Background</div></div>
+        </div>
+        <p style="font-size: 13px; color: var(--danger); margin-top: 8px;">Orange = casual, playful, food. Zero overlap with your brand.</p>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Spectral font, default layout, no brand identity</p>
+      </div>
+    </div>
+    <div class="comparison-panel">
+      <div class="comparison-label after">matthewkruczek.ai</div>
+      <div style="padding: 24px; background: #0a0a0b;">
+        <div class="swatch-row">
+          <div class="color-pair"><div class="swatch" style="background: #d4a853;"></div><div class="hex" style="color: #a1a1aa;">#d4a853</div><div class="role" style="color: #fafafa;">Gold</div></div>
+          <div class="color-pair"><div class="swatch" style="background: #0a0a0b; border: 1px solid #333;"></div><div class="hex" style="color: #a1a1aa;">#0a0a0b</div><div class="role" style="color: #fafafa;">Background</div></div>
+          <div class="color-pair"><div class="swatch" style="background: #111113; border: 1px solid #333;"></div><div class="hex" style="color: #a1a1aa;">#111113</div><div class="role" style="color: #fafafa;">Surface</div></div>
+        </div>
+        <p style="font-size: 13px; color: var(--mk-gold); margin-top: 8px;">Gold = premium, authority, sophistication. Your brand.</p>
+        <p style="font-size: 13px; color: var(--mk-text-secondary); margin-top: 4px;">Playfair Display + Source Sans 3, dark theme, editorial quality</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert warn">
+    <div class="alert-icon">!</div>
+    <div><strong>Substack dark mode limitation:</strong> Substack lets you set ONE background color. Setting it to #0a0a0b will make the entire page dark, but Substack's post content, forms, and some UI chrome may not render perfectly on dark backgrounds. Test after applying. If readability issues appear, fall back to #111113 or #18181b (slightly lighter dark).</div>
+  </div>
+</div>
+
+<!-- 2. Exact Settings -->
+<div class="section">
+  <div class="section-title">Substack Settings — Exact Values</div>
+  <div class="section-desc">Copy these values directly into your Substack dashboard under Settings > Website</div>
+
+  <table class="settings-table">
+    <thead><tr><th>Setting</th><th>Current</th><th>Change To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Background Color</td>
+        <td><span class="value">#FFFFFF</span></td>
+        <td><span class="value" style="background: #0a0a0b; color: #fafafa;">#0a0a0b</span></td>
+        <td>Match main site. If readability issues, try <span class="value" style="background: #18181b; color: #fafafa;">#18181b</span></td>
+      </tr>
+      <tr>
+        <td>Accent Color</td>
+        <td><span class="value" style="color: #FF6719;">#FF6719</span></td>
+        <td><span class="value" style="background: #d4a853; color: #0a0a0b;">#d4a853</span></td>
+        <td>Your brand gold. Subscribe buttons, links, highlights.</td>
+      </tr>
+      <tr>
+        <td>Header Layout</td>
+        <td>Stacked (default)</td>
+        <td><strong>Inline</strong></td>
+        <td>Mirrors your main site's fixed nav layout. Editorial, not bloggy.</td>
+      </tr>
+      <tr>
+        <td>Homepage Layout</td>
+        <td>List</td>
+        <td><strong>Magazine</strong></td>
+        <td>Hero post + grid gives the same visual hierarchy as your main site's blog section.</td>
+      </tr>
+      <tr>
+        <td>Hero Post</td>
+        <td>None</td>
+        <td><strong>Enabled</strong></td>
+        <td>Featured post gets prominence, like your main site's featured articles.</td>
+      </tr>
+      <tr>
+        <td>Post Display</td>
+        <td>List</td>
+        <td><strong>Grid</strong></td>
+        <td>Matches the 3-column grid on matthewkruczek.ai/blog</td>
+      </tr>
+      <tr>
+        <td>Link Style</td>
+        <td>Underlined</td>
+        <td><strong>Colored</strong></td>
+        <td>Gold-colored links on dark background = your exact main site pattern.</td>
+      </tr>
+      <tr>
+        <td>Footer Background</td>
+        <td>Default</td>
+        <td><span class="value" style="background: #0a0a0b; color: #fafafa;">#0a0a0b</span></td>
+        <td>Seamless dark footer matching your main site's border-top + dark footer.</td>
+      </tr>
+      <tr>
+        <td>Footer Content</td>
+        <td>Minimal</td>
+        <td><strong>Publication name + social links</strong></td>
+        <td>Matches your main site's footer pattern.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3. Mockup -->
+<div class="section">
+  <div class="section-title">Redesigned Homepage Mockup</div>
+  <div class="section-desc">How it looks with dark + gold applied</div>
+
+  <div class="mockup-frame">
+    <div class="mockup-browser">
+      <div class="mockup-dot" style="background: #EF4444;"></div>
+      <div class="mockup-dot" style="background: #F59E0B;"></div>
+      <div class="mockup-dot" style="background: #22C55E;"></div>
+      <div class="mockup-url">matthewkruczek.substack.com</div>
+    </div>
+
+    <!-- Inline header on dark -->
+    <div class="sub-header">
+      <div class="sub-logo-area">
+        <div class="sub-logo" style="background: #d4a853; color: #0a0a0b; font-family: 'Playfair Display', serif;">CE</div>
+        <div class="sub-title">Context Engineering</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="sub-nav">
+          <span>Home</span>
+          <span>Archive</span>
+          <span>About</span>
+        </div>
+        <button class="sub-btn" style="background: #d4a853; color: #0a0a0b;">Subscribe</button>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="sub-hero" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+      <div style="font-size: 12px; color: #d4a853; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; font-family: 'Source Sans 3', sans-serif;">AI Systems in Practice</div>
+      <h2>What actually works when deploying AI at enterprise scale.</h2>
+      <p>One observation from the field, every week. Patterns worth implementing, failure modes to avoid, and architectural decisions with hindsight clarity.</p>
+      <a class="sub-cta" style="background: #d4a853; color: #0a0a0b;">Subscribe for free</a>
+    </div>
+
+    <!-- Posts grid -->
+    <div class="sub-posts">
+      <div class="sub-post">
+        <div class="sub-post-img" style="background: linear-gradient(135deg, #111113 0%, #18181b 100%); color: #fafafa; font-family: 'Playfair Display', serif; font-size: 14px; padding: 16px; text-align: left; line-height: 1.4; font-weight: 600; position: relative;">
+          <div style="position: absolute; bottom: 12px; left: 16px; right: 16px;">
+            <div style="font-size: 13px;">Agent Harnesses Don't Need More Layers</div>
+            <div style="width: 24px; height: 1px; background: #d4a853; margin-top: 8px;"></div>
+          </div>
+        </div>
+        <div class="sub-post-body" style="background: #111113;">
+          <h3>Agent Harnesses Don't Need More Layers. They Need Fewer.</h3>
+          <div class="meta">MATT KRUCZEK &bull; MAR 14</div>
+        </div>
+      </div>
+      <div class="sub-post">
+        <div class="sub-post-img" style="background: linear-gradient(160deg, #0a0a0b 0%, #18181b 60%, rgba(212,168,83,0.08) 100%); color: #fafafa; font-family: 'Playfair Display', serif; font-size: 14px; padding: 16px; text-align: left; line-height: 1.4; font-weight: 600; position: relative;">
+          <div style="position: absolute; bottom: 12px; left: 16px; right: 16px;">
+            <div style="font-size: 13px;">Your Engineering Team Is Speaking a New Language</div>
+            <div style="width: 24px; height: 1px; background: #d4a853; margin-top: 8px;"></div>
+          </div>
+        </div>
+        <div class="sub-post-body" style="background: #111113;">
+          <h3>An Executive's Plain-English Guide to AI Development</h3>
+          <div class="meta">MATT KRUCZEK &bull; MAR 7</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sub-footer-mock">
+      <span style="font-family: 'Source Sans 3', sans-serif;">Context Engineering &bull; Matt Kruczek</span>
+      <span style="color: #d4a853;">matthewkruczek.ai</span>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Typography -->
+<div class="section">
+  <div class="section-title">Typography Strategy</div>
+  <div class="section-desc">Match your main site's type system within Substack's constraints</div>
+
+  <div class="card-grid">
+    <div class="card dark">
+      <h3>Your Main Site Fonts</h3>
+      <div style="margin-top: 12px;">
+        <div style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 4px;">Playfair Display</div>
+        <div style="font-size: 12px; color: var(--mk-text-muted); margin-bottom: 16px;">Headings, titles, logo — elegant serif</div>
+        <div style="font-family: 'Source Sans 3', sans-serif; font-size: 16px; line-height: 1.7; color: var(--mk-text-secondary);">Source Sans 3 — Body text, navigation, labels. Clean, readable sans-serif with excellent legibility at all sizes.</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Substack Font Selection</h3>
+      <p>Substack won't have Playfair Display. In their font picker, choose:</p>
+      <ol style="margin-top: 8px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+        <li style="margin-bottom: 6px;"><strong>Titles:</strong> Pick the most elegant/decorative serif available. Spectral (your current choice) is actually reasonable for titles on dark backgrounds.</li>
+        <li style="margin-bottom: 6px;"><strong>Body:</strong> Pick a clean sans-serif option if available, or keep the serif but ensure line spacing is comfortable.</li>
+        <li style="margin-bottom: 6px;"><strong>Workaround:</strong> Use a custom <strong>wordmark image</strong> rendered in Playfair Display to get exact font matching on the header (see Logo section).</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- 5. Logo & Wordmark -->
+<div class="section">
+  <div class="section-title">Logo & Wordmark</div>
+  <div class="section-desc">Brand-matched visual identity for the header</div>
+
+  <div class="card-grid">
+    <div class="card recommended dark">
+      <h3>Wordmark: Playfair Display on Dark</h3>
+      <p>Create a PNG wordmark with transparent background, rendered in Playfair Display. This bypasses Substack's font limitations entirely.</p>
+      <div style="margin-top: 16px; padding: 24px; background: var(--mk-bg); border-radius: 8px; text-align: center; border: 1px solid var(--mk-border);">
+        <div style="font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #fafafa; letter-spacing: -0.5px;">Context Engineering</div>
+        <div style="font-size: 11px; color: var(--mk-gold); margin-top: 6px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Source Sans 3', sans-serif;">AI Systems in Practice</div>
+      </div>
+      <p style="font-size: 13px; margin-top: 12px;">Spec: 1344 x 256px, transparent background, white text + gold subtitle. Export from Figma or Canva.</p>
+    </div>
+    <div class="card dark">
+      <h3>Icon/Favicon: Gold Monogram</h3>
+      <p>CE monogram matching your main site's style.</p>
+      <div style="margin-top: 16px; display: flex; gap: 16px; justify-content: center;">
+        <div style="width: 64px; height: 64px; background: #d4a853; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0a0a0b; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 24px;">CE</div>
+        <div style="width: 64px; height: 64px; background: #0a0a0b; border: 2px solid #d4a853; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #d4a853; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 24px;">CE</div>
+        <div style="width: 64px; height: 64px; background: #111113; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #d4a853; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 24px;">CE</div>
+      </div>
+      <p style="font-size: 13px; margin-top: 12px;">Spec: 256 x 256px. Option 1 (gold bg) is highest visibility as favicon.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 6. Post Cover Art -->
+<div class="section">
+  <div class="section-title">Post Cover Image System</div>
+  <div class="section-desc">Consistent cover art using your brand's dark + gold + subtle glow system</div>
+
+  <div class="card dark">
+    <h3>Template System (matches matthewkruczek.ai blog cards)</h3>
+    <p style="margin-bottom: 16px;">Replicate your main site's gradient-on-dark cover style. Each post category gets a distinct accent glow color.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+      <!-- Patterns category -->
+      <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, #111113 0%, #18181b 100%); border-radius: 8px; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);">
+        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(212,168,83,0.08); border: 1px solid rgba(212,168,83,0.12);"></div>
+        <div style="font-size: 10px; color: #d4a853; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-family: 'Source Sans 3', sans-serif;">Patterns</div>
+        <div style="font-family: 'Playfair Display', serif; color: #fafafa; font-size: 12px; font-weight: 600; line-height: 1.3;">Agent Harnesses</div>
+        <div style="width: 20px; height: 1px; background: #d4a853; margin-top: 6px;"></div>
+      </div>
+      <!-- Failures category -->
+      <div style="aspect-ratio: 16/9; background: linear-gradient(160deg, #0a0a0b 0%, #18181b 100%); border-radius: 8px; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);">
+        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(220,100,100,0.06); border: 1px solid rgba(220,100,100,0.1);"></div>
+        <div style="font-size: 10px; color: #c87070; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-family: 'Source Sans 3', sans-serif;">Failure Modes</div>
+        <div style="font-family: 'Playfair Display', serif; color: #fafafa; font-size: 12px; font-weight: 600; line-height: 1.3;">Executive Guide</div>
+        <div style="width: 20px; height: 1px; background: #c87070; margin-top: 6px;"></div>
+      </div>
+      <!-- Architecture category -->
+      <div style="aspect-ratio: 16/9; background: linear-gradient(200deg, #111113 0%, #0a0a0b 100%); border-radius: 8px; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);">
+        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(80,180,160,0.06); border: 1px solid rgba(80,180,160,0.1);"></div>
+        <div style="font-size: 10px; color: #50b4a0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-family: 'Source Sans 3', sans-serif;">Architecture</div>
+        <div style="font-family: 'Playfair Display', serif; color: #fafafa; font-size: 12px; font-weight: 600; line-height: 1.3;">Architecture Decisions</div>
+        <div style="width: 20px; height: 1px; background: #50b4a0; margin-top: 6px;"></div>
+      </div>
+    </div>
+
+    <p style="font-size: 13px; margin-top: 16px;"><strong>Category accent colors:</strong> Patterns = <span style="color: #d4a853;">gold #d4a853</span> | Failures = <span style="color: #c87070;">muted red #c87070</span> | Architecture = <span style="color: #50b4a0;">teal #50b4a0</span></p>
+    <p style="font-size: 13px; margin-top: 4px;"><strong>Template:</strong> Dark gradient bg + category label (accent color, uppercase) + title (white, Playfair) + gold accent line. Create in Canva at 1200x630px.</p>
+  </div>
+</div>
+
+<!-- 7. Sidebar -->
+<div class="section">
+  <div class="section-title">Sidebar Links</div>
+  <div class="section-desc">Cross-platform presence that reinforces your brand</div>
+
+  <div style="display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start;">
+    <div class="sidebar-preview">
+      <h4>Recommended Links</h4>
+      <a class="sidebar-link">matthewkruczek.ai</a>
+      <a class="sidebar-link">GitHub @MCKRUZ</a>
+      <a class="sidebar-link">LinkedIn</a>
+      <a class="sidebar-link">Pluralsight Courses</a>
+    </div>
+    <div class="card">
+      <h3>Link Strategy</h3>
+      <p>On dark backgrounds, gold-colored sidebar links will match your main site's navigation exactly. Each link serves a credibility function:</p>
+      <ul style="margin-top: 8px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+        <li style="margin-bottom: 4px;"><strong>Main site</strong> — drives traffic to your full thought leadership catalog</li>
+        <li style="margin-bottom: 4px;"><strong>GitHub</strong> — "I ship code" credibility signal</li>
+        <li style="margin-bottom: 4px;"><strong>LinkedIn</strong> — where enterprise decision-makers discover you</li>
+        <li style="margin-bottom: 4px;"><strong>Pluralsight</strong> — 17M learners authority proof point</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 8. Checklist -->
+<div class="section">
+  <div class="section-title">Implementation Checklist</div>
+  <div class="section-desc">Priority-ordered steps</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Phase 1: Settings (5 minutes)</h3>
+      <ul class="checklist">
+        <li><span class="check-icon do">1</span> Set background color to <strong>#0a0a0b</strong></li>
+        <li><span class="check-icon do">2</span> Set accent color to <strong>#d4a853</strong></li>
+        <li><span class="check-icon do">3</span> Switch header layout to <strong>Inline</strong></li>
+        <li><span class="check-icon do">4</span> Switch homepage to <strong>Magazine</strong></li>
+        <li><span class="check-icon do">5</span> Enable <strong>Hero post</strong></li>
+        <li><span class="check-icon do">6</span> Switch post display to <strong>Grid</strong></li>
+        <li><span class="check-icon do">7</span> Change link style to <strong>Colored</strong></li>
+        <li><span class="check-icon do">8</span> Update sidebar links (4 links)</li>
+        <li><span class="check-icon do">9</span> Set footer with social links</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Phase 2: Assets (this week)</h3>
+      <ul class="checklist">
+        <li><span class="check-icon do">10</span> Create CE gold monogram logo (256x256px)</li>
+        <li><span class="check-icon do">11</span> Create Playfair Display wordmark (1344x256px)</li>
+        <li><span class="check-icon do">12</span> Build cover art templates in Canva (3 categories)</li>
+        <li><span class="check-icon do">13</span> Regenerate covers for existing posts</li>
+        <li><span class="check-icon do">14</span> Update About page text and tone</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Phase 3: Verify (after applying)</h3>
+      <ul class="checklist">
+        <li><span class="check-icon warn">!</span> Check text readability on dark background</li>
+        <li><span class="check-icon warn">!</span> Test subscribe form contrast on dark bg</li>
+        <li><span class="check-icon warn">!</span> Verify email template still looks good</li>
+        <li><span class="check-icon warn">!</span> Check mobile rendering of dark theme</li>
+        <li><span class="check-icon warn">!</span> If anything breaks, try <strong>#18181b</strong> as fallback bg</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 9. Anti-Patterns -->
+<div class="section">
+  <div class="section-title">Anti-Patterns</div>
+  <div class="section-desc">What to avoid on dark Substack themes</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Dark Theme Pitfalls</h3>
+      <ul class="checklist">
+        <li><span class="check-icon dont">X</span> Pure white (#fff) text on pure black (#000) — too harsh. Use #fafafa on #0a0a0b.</li>
+        <li><span class="check-icon dont">X</span> Bright accent glow/neon effects — gold should be warm, not electric</li>
+        <li><span class="check-icon dont">X</span> Colorful post covers — they'll clash. Keep covers dark + subtle accent</li>
+        <li><span class="check-icon dont">X</span> Emojis in titles on dark backgrounds — they break the premium feel</li>
+        <li><span class="check-icon dont">X</span> Inconsistent cover art styles — use the template system above</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Contrast Checks (WCAG)</h3>
+      <ul style="font-size: 14px; color: var(--text-secondary); padding-left: 20px;">
+        <li style="margin-bottom: 6px;"><strong>#fafafa on #0a0a0b</strong> — 19.4:1 ratio (exceeds AAA)</li>
+        <li style="margin-bottom: 6px;"><strong>#d4a853 on #0a0a0b</strong> — 7.8:1 ratio (exceeds AAA)</li>
+        <li style="margin-bottom: 6px;"><strong>#a1a1aa on #0a0a0b</strong> — 7.2:1 ratio (exceeds AAA)</li>
+        <li style="margin-bottom: 6px;"><strong>#71717a on #0a0a0b</strong> — 4.6:1 ratio (passes AA)</li>
+      </ul>
+      <p style="font-size: 13px; margin-top: 8px; color: var(--success); font-weight: 500;">All your brand colors pass WCAG contrast requirements on dark backgrounds.</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div style="background: #0a0a0b; color: #fafafa; padding: 32px 0; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.06);">
+  <div class="container" style="text-align: center;">
+    <div style="font-size: 13px; color: #71717a;">Generated by UI/UX Pro Max Design Intelligence</div>
+    <div style="font-size: 12px; color: #71717a; margin-top: 4px; opacity: 0.6;">Brand: matthewkruczek.ai tokens | Palette: Dark + Gold Premium | Style: Editorial Dark Mode</div>
+  </div>
+</div>
+
+</body>
+</html>

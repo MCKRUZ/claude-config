@@ -1,0 +1,20 @@
+{
+  "name": "content",
+  "description": "Content creation, marketing, and brand management profile. Activates archived marketing/design/product agents alongside the base engineering setup.",
+  "agents": {
+    "activate": [
+      "_archived/marketing/content-creator.md",
+      "_archived/marketing/twitter-engager.md",
+      "_archived/marketing/instagram-curator.md",
+      "_archived/marketing/reddit-community-builder.md",
+      "_archived/marketing/tiktok-strategist.md",
+      "_archived/marketing/growth-hacker.md",
+      "_archived/marketing/app-store-optimizer.md",
+      "_archived/design/brand-guardian.md",
+      "_archived/design/visual-storyteller.md",
+      "_archived/product/trend-researcher.md",
+      "_archived/product/feedback-synthesizer.md"
+    ]
+  },
+  "notes": "Use with CCTM: open CCTM > Profiles > import this config, or snapshot after manually enabling these agents."
+}

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harness Comparison: claude-code-mastery vs everything-claude-code</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent-blue: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-orange: #d29922;
+    --accent-red: #f85149;
+    --accent-purple: #bc8cff;
+    --ccm: #58a6ff;
+    --ecc: #f0883e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+  header { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  header p { color: var(--text-muted); font-size: 1.1rem; }
+
+  .legend { display: flex; gap: 2rem; justify-content: center; margin: 1.5rem 0; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .legend-dot.ccm { background: var(--ccm); }
+  .legend-dot.ecc { background: var(--ecc); }
+  .legend-dot.steal { background: var(--accent-green); }
+  .legend-dot.keep { background: var(--accent-purple); }
+
+  /* Score cards */
+  .scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 3rem; }
+  .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; }
+  .score-card .label { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .score-card .value { font-size: 2rem; font-weight: 700; }
+  .score-card .sublabel { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+  /* Dimension sections */
+  .dimension { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 2rem; overflow: hidden; }
+  .dimension-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .dimension-header h2 { font-size: 1.2rem; display: flex; align-items: center; gap: 0.75rem; }
+  .dimension-header .winner { font-size: 0.8rem; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 600; }
+  .winner.ccm { background: rgba(88, 166, 255, 0.15); color: var(--ccm); }
+  .winner.ecc { background: rgba(240, 136, 62, 0.15); color: var(--ecc); }
+  .winner.tie { background: rgba(139, 148, 158, 0.15); color: var(--text-muted); }
+
+  .dimension-body { padding: 1.5rem; }
+
+  .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 900px) { .comparison-grid { grid-template-columns: 1fr; } }
+
+  .harness-col { background: var(--surface2); border-radius: 8px; padding: 1.25rem; }
+  .harness-col h3 { font-size: 0.95rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+  .harness-col h3.ccm-label { color: var(--ccm); }
+  .harness-col h3.ecc-label { color: var(--ecc); }
+
+  .harness-col ul { list-style: none; }
+  .harness-col li { padding: 0.35rem 0; font-size: 0.9rem; padding-left: 1.25rem; position: relative; }
+  .harness-col li::before { content: ''; position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; }
+  .ccm-col li::before { background: var(--ccm); }
+  .ecc-col li::before { background: var(--ecc); }
+
+  .gap-item { color: var(--accent-red); font-style: italic; }
+  .gap-item::before { background: var(--accent-red) !important; }
+
+  /* Verdict */
+  .verdict { background: var(--surface2); border-radius: 8px; padding: 1rem 1.25rem; margin-top: 1rem; border-left: 3px solid var(--accent-green); }
+  .verdict strong { color: var(--accent-green); }
+
+  /* Action plan */
+  .action-plan { background: var(--surface); border: 2px solid var(--accent-green); border-radius: 12px; padding: 2rem; margin-top: 2rem; }
+  .action-plan h2 { color: var(--accent-green); margin-bottom: 1.5rem; font-size: 1.4rem; }
+
+  .action-section { margin-bottom: 2rem; }
+  .action-section h3 { font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .action-section h3 .badge { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 12px; font-weight: 600; }
+  .badge.steal { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+  .badge.keep { background: rgba(188, 140, 255, 0.15); color: var(--accent-purple); }
+  .badge.enhance { background: rgba(210, 153, 34, 0.15); color: var(--accent-orange); }
+
+  .action-item { background: var(--surface2); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: start; }
+  .action-item .priority { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; white-space: nowrap; margin-top: 0.15rem; }
+  .priority.p1 { background: rgba(248, 81, 73, 0.2); color: var(--accent-red); }
+  .priority.p2 { background: rgba(210, 153, 34, 0.2); color: var(--accent-orange); }
+  .priority.p3 { background: rgba(139, 148, 158, 0.2); color: var(--text-muted); }
+  .action-item .desc { }
+  .action-item .desc .title { font-weight: 600; margin-bottom: 0.25rem; }
+  .action-item .desc .detail { font-size: 0.85rem; color: var(--text-muted); }
+  .action-item .effort { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+
+  /* Summary table */
+  .summary-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  .summary-table th, .summary-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .summary-table th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; }
+  .summary-table .num { text-align: center; font-weight: 700; font-size: 1.1rem; }
+  .summary-table .num.ccm-num { color: var(--ccm); }
+  .summary-table .num.ecc-num { color: var(--ecc); }
+
+  footer { text-align: center; padding: 2rem 0; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Harness Comparison Dashboard</h1>
+  <p>claude-code-mastery (MCKRUZ) vs everything-claude-code (affaan-m)</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot ccm"></div> claude-code-mastery (CCM)</div>
+    <div class="legend-item"><div class="legend-dot ecc"></div> everything-claude-code (ECC)</div>
+    <div class="legend-item"><div class="legend-dot steal"></div> Steal from ECC</div>
+    <div class="legend-item"><div class="legend-dot keep"></div> Keep from CCM</div>
+  </div>
+</header>
+
+<!-- Scorecards -->
+<div class="scores">
+  <div class="score-card">
+    <div class="label">Skills</div>
+    <div class="value" style="color:var(--ecc)">184 vs 15</div>
+    <div class="sublabel">ECC has quantity; CCM has quality</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Hooks</div>
+    <div class="value" style="color:var(--ecc)">12+ vs 1</div>
+    <div class="sublabel">Biggest gap in CCM</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Rules</div>
+    <div class="value" style="color:var(--ccm)">8 deep vs 10 broad</div>
+    <div class="sublabel">CCM rules are more specific</div>
+  </div>
+  <div class="score-card">
+    <div class="label">MCP Servers</div>
+    <div class="value" style="color:var(--ccm)">11 vs 0</div>
+    <div class="sublabel">Bifrost is a major advantage</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Cross-Project</div>
+    <div class="value" style="color:var(--ccm)">Nexus</div>
+    <div class="sublabel">ECC has nothing comparable</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Platforms</div>
+    <div class="value" style="color:var(--ecc)">7 vs 2</div>
+    <div class="sublabel">ECC targets more IDEs</div>
+  </div>
+</div>
+
+<!-- Dimension 1: Skills -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>1. Skills</h2>
+    <span class="winner tie">Draw &mdash; different strengths</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery (15 curated)</h3>
+        <ul>
+          <li>Dashboard creator, slides, visual explainer (presentation layer)</li>
+          <li>PDF & DOCX manipulation</li>
+          <li>Demo video capture via Playwright + ffmpeg</li>
+          <li>Shannon autonomous pentester</li>
+          <li>Excalidraw diagram generation</li>
+          <li>Humanizer (AI writing detection removal)</li>
+          <li>LLM cost optimizer</li>
+          <li>Functional design (spec to code)</li>
+          <li>Skeptic (critical analysis)</li>
+          <li>TDD workflow, security review, project memory</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code (184 total, 34 curated)</h3>
+        <ul>
+          <li>Agent introspection debugging (structured failure recovery)</li>
+          <li>Strategic compact (context management)</li>
+          <li>Verification loop (6-phase post-implementation check)</li>
+          <li>Deep research (multi-source synthesis)</li>
+          <li>DMUX workflows (parallel multi-agent orchestration)</li>
+          <li>Content engine, crosspost, brand voice</li>
+          <li>Investor materials &amp; outreach</li>
+          <li>Exa search, fal-ai media, X API</li>
+          <li>Frontend slides with style presets</li>
+          <li>150 generated/domain-specific skills (varying quality)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> CCM skills are high-quality and unique (Shannon, demo-video, humanizer). ECC's standout skills are <em>verification-loop</em>, <em>agent-introspection-debugging</em>, <em>strategic-compact</em>, and <em>deep-research</em> &mdash; these are workflow-level skills that improve the agent's meta-cognition. <strong>Steal those four.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- Dimension 2: Hooks -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>2. Hooks &amp; Automation</h2>
+    <span class="winner ecc">ECC leads significantly</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery</h3>
+        <ul>
+          <li>1 PowerShell hook (desktop screenshot capture)</li>
+          <li>context-mode hooks (startup sync, context protection)</li>
+          <li>Session memory hooks (startup session load)</li>
+          <li class="gap-item">No quality gate hooks</li>
+          <li class="gap-item">No git safety hooks</li>
+          <li class="gap-item">No cost tracking</li>
+          <li class="gap-item">No compaction trigger</li>
+          <li class="gap-item">No post-tool type checking</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code</h3>
+        <ul>
+          <li>Pre-Bash commit quality gate (lint, format, typecheck)</li>
+          <li>Pre-Bash dev-server blocking (prevents hanging)</li>
+          <li>Pre-Bash reminders (context-aware nudges)</li>
+          <li>Git safety hooks (block --no-verify, push confirmation)</li>
+          <li>Post-tool type checking &amp; format verification</li>
+          <li>Cost tracking on PreToolUse</li>
+          <li>Session activity tracker (SQLite persistence)</li>
+          <li>Compaction suggestion at 50 tool calls</li>
+          <li>MCP health check</li>
+          <li>Config protection (prevent settings overwrites)</li>
+          <li>Hook profiles: minimal / standard / strict</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> This is CCM's biggest gap. ECC's hooks provide automated guardrails that catch mistakes before they happen. <strong>Steal:</strong> quality gates (pre-commit typecheck/lint), git safety (block --no-verify), compaction triggers, and dev-server blocking. Adapt to your PowerShell/Windows environment.
+    </div>
+  </div>
+</div>
+
+<!-- Dimension 3: Rules -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>3. Rules, Guardrails &amp; Instincts</h2>
+    <span class="winner ccm">CCM leads on depth</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery</h3>
+        <ul>
+          <li>Autonomy framework (Green/Yellow/Red) &mdash; unique, elegant</li>
+          <li>Working relationship norms (tone, pushback, uncertainty)</li>
+          <li>Scope discipline (explicit "don't" list)</li>
+          <li>Deep C#/TypeScript/Angular coding standards</li>
+          <li>Bifrost MCP tool selection priority hierarchy</li>
+          <li>Nexus cross-project memory rules</li>
+          <li>Privacy tags pattern</li>
+          <li>Skeleton projects reuse pattern</li>
+          <li>Compact preservation rules</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code</h3>
+        <ul>
+          <li>5-phase development workflow (Research &rarr; Plan &rarr; TDD &rarr; Review &rarr; Commit)</li>
+          <li>Research-first mandate (GitHub search before coding)</li>
+          <li>Language-specific rules (10 languages: Go, Rust, Python, C#, etc.)</li>
+          <li>Instincts YAML (curated learning patterns, cross-platform sync)</li>
+          <li>Enterprise controls (audit, approval gates)</li>
+          <li>Conventional commits enforced</li>
+          <li>Code review severity classification (Critical/High/Medium)</li>
+          <li class="gap-item">No autonomy framework</li>
+          <li class="gap-item">No working relationship norms</li>
+          <li class="gap-item">No scope discipline rules</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> CCM's rules are more opinionated and personalized &mdash; the autonomy framework and relationship norms are things ECC doesn't attempt. ECC's strength is the <em>formalized development workflow</em> and <em>research-first mandate</em>. <strong>Steal:</strong> the 5-phase dev workflow and research-first rule. <strong>Keep:</strong> autonomy framework, relationship norms, scope discipline.
+    </div>
+  </div>
+</div>
+
+<!-- Dimension 4: Security -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>4. Security</h2>
+    <span class="winner ccm">CCM leads on depth</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery</h3>
+        <ul>
+          <li>Secrets management (dev: User Secrets, prod: Key Vault)</li>
+          <li>Input validation &amp; injection prevention</li>
+          <li>HTTP security headers (CSP, HSTS, X-Frame-Options)</li>
+          <li>JWT validation (ClockSkew=Zero, full validation)</li>
+          <li>AI/LLM security (prompt injection defense, content safety)</li>
+          <li>Supply chain security (npm audit, dotnet vulnerable check)</li>
+          <li>CORS explicit allowlist</li>
+          <li>Auto-spawn security-reviewer on auth/payment code</li>
+          <li>Shannon pentester skill for active testing</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code</h3>
+        <ul>
+          <li>OWASP Top 10 checklist in security-review skill</li>
+          <li>Pre-commit security gate hook</li>
+          <li>Enterprise audit trails</li>
+          <li>Blockchain wallet verification (niche)</li>
+          <li>Security response protocol in dev workflow</li>
+          <li class="gap-item">No AI/LLM-specific security</li>
+          <li class="gap-item">No HTTP header standards</li>
+          <li class="gap-item">No supply chain auditing</li>
+          <li class="gap-item">No active pentesting capability</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> CCM's security is deeper and more comprehensive, especially around AI/LLM security and HTTP hardening. ECC's pre-commit security gate hook is worth stealing. <strong>Keep:</strong> everything CCM has. <strong>Steal:</strong> pre-commit security hook automation.
+    </div>
+  </div>
+</div>
+
+<!-- Dimension 5: Session & Memory -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>5. Session &amp; Memory Management</h2>
+    <span class="winner ccm">CCM leads with Nexus</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery</h3>
+        <ul>
+          <li>Nexus cross-project intelligence (decisions, conflicts, notes)</li>
+          <li>cmem session memory (structured session recall)</li>
+          <li>Auto-memory system (user, feedback, project, reference types)</li>
+          <li>context-mode (sandbox-based context window protection)</li>
+          <li>Compact preservation rules (decisions, corrections, file paths)</li>
+          <li>Portfolio-wide sync via CLAUDE.md</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code</h3>
+        <ul>
+          <li>SQLite state store for session persistence</li>
+          <li>Strategic compaction skill (phase-aware boundaries)</li>
+          <li>Threshold-based compaction trigger (50 tool calls)</li>
+          <li>Session CLI for inspection/analysis</li>
+          <li class="gap-item">No cross-project memory</li>
+          <li class="gap-item">No context window protection system</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> CCM's memory stack (Nexus + cmem + auto-memory + context-mode) is far more sophisticated. ECC's <em>strategic compaction</em> and <em>threshold-based triggers</em> are good additions. <strong>Steal:</strong> compaction automation (suggest at 50 tool calls), phase-aware compaction boundaries.
+    </div>
+  </div>
+</div>
+
+<!-- Dimension 6: MCP & Integrations -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>6. MCP &amp; External Integrations</h2>
+    <span class="winner ccm">CCM leads decisively</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery</h3>
+        <ul>
+          <li>Bifrost gateway (11 servers behind one endpoint)</li>
+          <li>Tool selection priority hierarchy (built-in &rarr; gh CLI &rarr; Classic &rarr; Code Mode)</li>
+          <li>Classic: context7, sequential_thinking, microsoft_learn, YouTube</li>
+          <li>Code Mode: github, firecrawl, playwright, chrome_devtools, Reddit</li>
+          <li>context-mode plugin (ctx_execute, ctx_search, ctx_batch)</li>
+          <li>Nexus local MCP (cross-project queries)</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code</h3>
+        <ul>
+          <li>ecc-tools.json (custom tool definitions)</li>
+          <li>MCP health check hook</li>
+          <li class="gap-item">No MCP gateway</li>
+          <li class="gap-item">No external server integrations</li>
+          <li class="gap-item">No tool selection hierarchy</li>
+          <li class="gap-item">No context window protection</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> Bifrost + context-mode + Nexus is a massive advantage. ECC doesn't compete here. <strong>Keep:</strong> everything. <strong>Steal:</strong> MCP health check hook (auto-verify servers are responding).
+    </div>
+  </div>
+</div>
+
+<!-- Dimension 7: Tooling & CLI -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>7. Tooling, CLI &amp; Developer Experience</h2>
+    <span class="winner ecc">ECC leads on DX</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery</h3>
+        <ul>
+          <li>Install via PowerShell script (Windows-native)</li>
+          <li>Cursor export pipeline</li>
+          <li>APM modules for plugin management</li>
+          <li>Eval framework with objective assertions</li>
+          <li class="gap-item">No doctor/diagnostics command</li>
+          <li class="gap-item">No repair script</li>
+          <li class="gap-item">No status dashboard CLI</li>
+          <li class="gap-item">No catalog management</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code</h3>
+        <ul>
+          <li><code>ecc</code> CLI with subcommands</li>
+          <li><code>ecc doctor</code> &mdash; system diagnostics</li>
+          <li><code>ecc repair</code> &mdash; auto-fix common issues</li>
+          <li><code>ecc status</code> &mdash; installation dashboard</li>
+          <li><code>ecc catalog</code> &mdash; skill/agent browser</li>
+          <li><code>ecc audit</code> &mdash; harness health check</li>
+          <li>Multi-platform install (Claude, Codex, Cursor, Gemini, OpenCode, Trae)</li>
+          <li>Package manager auto-detection</li>
+          <li>Uninstall/cleanup script</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> ECC's CLI tooling is polished &mdash; doctor, repair, audit, and catalog are genuinely useful. <strong>Steal:</strong> the doctor/diagnostics concept (you already have <code>/harness-audit</code> &mdash; enhance it with repair capabilities).
+    </div>
+  </div>
+</div>
+
+<!-- Dimension 8: Multi-Agent Orchestration -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>8. Multi-Agent Orchestration</h2>
+    <span class="winner tie">Different approaches, both strong</span>
+  </div>
+  <div class="dimension-body">
+    <div class="comparison-grid">
+      <div class="harness-col ccm-col">
+        <h3 class="ccm-label">claude-code-mastery</h3>
+        <ul>
+          <li>30 typed subagents across 4 categories</li>
+          <li>Built-in Claude Code agent spawning (Agent tool)</li>
+          <li>Worktree isolation for parallel branches</li>
+          <li>Autonomy-aware delegation (Green/Yellow/Red)</li>
+          <li>Mandatory auto-spawn rules (security, build-fix)</li>
+          <li class="gap-item">No tmux orchestration</li>
+          <li class="gap-item">No inter-agent coordination files</li>
+        </ul>
+      </div>
+      <div class="harness-col ecc-col">
+        <h3 class="ecc-label">everything-claude-code</h3>
+        <ul>
+          <li>tmux-based multi-agent orchestration</li>
+          <li>JSON plan files with worker definitions</li>
+          <li>Coordination directory (task/handoff/status files)</li>
+          <li>Placeholder system for worker context injection</li>
+          <li>50+ specialized agents</li>
+          <li>DMUX workflows skill for parallel research+implement</li>
+          <li class="gap-item">No autonomy framework for delegation</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>Verdict:</strong> CCM uses Claude Code's native subagent system effectively. ECC's tmux orchestration is more ambitious but also more complex. <strong>Consider:</strong> the DMUX workflow pattern for genuinely parallel multi-feature work. <strong>Keep:</strong> native Agent tool + worktree approach for simplicity.
+    </div>
+  </div>
+</div>
+
+<!-- Summary Table -->
+<div class="dimension">
+  <div class="dimension-header">
+    <h2>Dimension Summary</h2>
+  </div>
+  <div class="dimension-body">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th style="text-align:center; color:var(--ccm);">CCM</th>
+          <th style="text-align:center; color:var(--ecc);">ECC</th>
+          <th>Winner</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Skills</td><td class="num ccm-num">15</td><td class="num ecc-num">184</td><td>Draw</td><td>Steal 4 meta-cognitive skills</td></tr>
+        <tr><td>Hooks</td><td class="num ccm-num">1</td><td class="num ecc-num">12+</td><td style="color:var(--ecc)">ECC</td><td>Steal quality gates, git safety, compaction trigger</td></tr>
+        <tr><td>Rules</td><td class="num ccm-num">8</td><td class="num ecc-num">10</td><td style="color:var(--ccm)">CCM</td><td>Steal 5-phase workflow, research-first</td></tr>
+        <tr><td>Security</td><td class="num ccm-num">9</td><td class="num ecc-num">5</td><td style="color:var(--ccm)">CCM</td><td>Steal pre-commit security hook</td></tr>
+        <tr><td>Memory</td><td class="num ccm-num">6</td><td class="num ecc-num">4</td><td style="color:var(--ccm)">CCM</td><td>Steal compaction automation</td></tr>
+        <tr><td>MCP</td><td class="num ccm-num">11</td><td class="num ecc-num">1</td><td style="color:var(--ccm)">CCM</td><td>Steal MCP health check</td></tr>
+        <tr><td>CLI/DX</td><td class="num ccm-num">3</td><td class="num ecc-num">8</td><td style="color:var(--ecc)">ECC</td><td>Enhance /harness-audit with repair</td></tr>
+        <tr><td>Orchestration</td><td class="num ccm-num">30</td><td class="num ecc-num">50+</td><td>Draw</td><td>Consider DMUX pattern</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ACTION PLAN -->
+<div class="action-plan">
+  <h2>Action Plan: Building the Best Harness</h2>
+  <p style="color:var(--text-muted); margin-bottom: 1.5rem;">Prioritized by impact. Your CCM foundation is strong &mdash; these are targeted upgrades, not a rewrite.</p>
+
+  <div class="action-section">
+    <h3>Steal from ECC <span class="badge steal">HIGH IMPACT</span></h3>
+
+    <div class="action-item">
+      <span class="priority p1">P1</span>
+      <div class="desc">
+        <div class="title">Hook System: Quality Gates &amp; Git Safety</div>
+        <div class="detail">Port ECC's pre-commit quality gate (typecheck + lint), git safety (block --no-verify), and dev-server blocking hooks. Adapt to your Windows/PowerShell environment. This closes your biggest gap.</div>
+      </div>
+      <div class="effort">~4 hrs</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p1">P1</span>
+      <div class="desc">
+        <div class="title">Verification Loop Skill</div>
+        <div class="detail">Adopt ECC's 6-phase post-implementation verification: build &rarr; types &rarr; lint &rarr; tests (80%) &rarr; security scan &rarr; diff review. This systematizes what you currently do manually.</div>
+      </div>
+      <div class="effort">~2 hrs</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p1">P1</span>
+      <div class="desc">
+        <div class="title">Research-First Development Rule</div>
+        <div class="detail">Add a rule enforcing GitHub search (<code>gh search repos</code>, <code>gh search code</code>) and library docs (Context7) before writing new code. ECC's 5-phase workflow formalizes what should be default behavior.</div>
+      </div>
+      <div class="effort">~1 hr</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p2">P2</span>
+      <div class="desc">
+        <div class="title">Agent Introspection &amp; Debugging Skill</div>
+        <div class="detail">Four-phase structured recovery: failure capture &rarr; diagnosis &rarr; contained recovery &rarr; human-readable report. Turns cryptic failures into actionable diagnostics.</div>
+      </div>
+      <div class="effort">~2 hrs</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p2">P2</span>
+      <div class="desc">
+        <div class="title">Strategic Compaction Automation</div>
+        <div class="detail">Add a hook that suggests compaction at 50 tool calls and at phase boundaries (research&rarr;plan, plan&rarr;implement). Your context-mode already protects the window; this adds proactive management.</div>
+      </div>
+      <div class="effort">~2 hrs</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p3">P3</span>
+      <div class="desc">
+        <div class="title">MCP Health Check Hook</div>
+        <div class="detail">Auto-verify Bifrost and other MCP servers are responding on session start. Prevents wasted time discovering a dead server mid-task.</div>
+      </div>
+      <div class="effort">~1 hr</div>
+    </div>
+  </div>
+
+  <div class="action-section">
+    <h3>Keep &amp; Protect from CCM <span class="badge keep">UNIQUE VALUE</span></h3>
+
+    <div class="action-item">
+      <span class="priority p1">P1</span>
+      <div class="desc">
+        <div class="title">Bifrost MCP Gateway + Tool Priority Hierarchy</div>
+        <div class="detail">11 servers behind one endpoint with a clear selection priority. ECC has nothing comparable. This is your biggest differentiator.</div>
+      </div>
+      <div class="effort">Keep as-is</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p1">P1</span>
+      <div class="desc">
+        <div class="title">Nexus Cross-Project Intelligence</div>
+        <div class="detail">Portfolio-wide decision tracking, conflict detection, and context sharing. No equivalent in ECC or any other public harness.</div>
+      </div>
+      <div class="effort">Keep as-is</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p1">P1</span>
+      <div class="desc">
+        <div class="title">Autonomy Framework (Green/Yellow/Red)</div>
+        <div class="detail">Elegant and practical. ECC doesn't attempt this. It fundamentally shapes how the agent makes decisions about when to act vs. ask.</div>
+      </div>
+      <div class="effort">Keep as-is</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p2">P2</span>
+      <div class="desc">
+        <div class="title">Context-Mode Plugin</div>
+        <div class="detail">Sandbox-based context window protection. ECC uses compaction; you use prevention. Both are valid, but prevention is better.</div>
+      </div>
+      <div class="effort">Keep as-is</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p2">P2</span>
+      <div class="desc">
+        <div class="title">Working Relationship Norms + Scope Discipline</div>
+        <div class="detail">These shape the agent's personality and prevent scope creep. ECC is generic; your setup is personalized to how you work.</div>
+      </div>
+      <div class="effort">Keep as-is</div>
+    </div>
+  </div>
+
+  <div class="action-section">
+    <h3>Enhance Existing CCM <span class="badge enhance">COMBINE BEST OF BOTH</span></h3>
+
+    <div class="action-item">
+      <span class="priority p2">P2</span>
+      <div class="desc">
+        <div class="title">/harness-audit &rarr; Add Repair &amp; Doctor Capabilities</div>
+        <div class="detail">You already have /harness-audit. Enhance it with ECC's auto-repair patterns: fix broken symlinks, validate hook configs, verify MCP connectivity, check for stale rules.</div>
+      </div>
+      <div class="effort">~3 hrs</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p2">P2</span>
+      <div class="desc">
+        <div class="title">Development Workflow Rule: Formalize 5 Phases</div>
+        <div class="detail">Merge ECC's Research &rarr; Plan &rarr; TDD &rarr; Review &rarr; Commit pipeline into your existing rules. You already do most of this; formalizing it ensures consistency.</div>
+      </div>
+      <div class="effort">~1 hr</div>
+    </div>
+
+    <div class="action-item">
+      <span class="priority p3">P3</span>
+      <div class="desc">
+        <div class="title">Hook Profiles (minimal/standard/strict)</div>
+        <div class="detail">When you add hooks, implement ECC's profile system. Quick prototyping gets minimal hooks; production code gets strict. Controlled via env var.</div>
+      </div>
+      <div class="effort">~2 hrs</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Generated 2026-04-23 &bull; claude-code-mastery vs everything-claude-code comprehensive comparison
+</footer>
+
+</div>
+</body>
+</html>

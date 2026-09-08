@@ -1,0 +1,36 @@
+{
+  "name": "youtube-studio",
+  "version": "1.0.0",
+  "description": "Automate YouTube Studio video uploads, channel management, and creator analytics",
+  "author": "Canifi",
+  "category": "social-media",
+  "permissions": [
+    "browser",
+    "notifications",
+    "env-access"
+  ],
+  "triggers": [
+    "youtube studio",
+    "upload youtube",
+    "youtube analytics",
+    "youtube channel",
+    "yt studio"
+  ],
+  "authentication": {
+    "type": "google-oauth",
+    "loginUrl": "https://studio.youtube.com",
+    "sessionIndicator": "#dashboard"
+  },
+  "requiredEnvVars": [
+    "GOOGLE_EMAIL",
+    "GOOGLE_PASSWORD"
+  ],
+  "capabilities": {
+    "uploads": true,
+    "analytics": true,
+    "comments": true,
+    "content": true,
+    "revenue": true,
+    "settings": true
+  }
+}

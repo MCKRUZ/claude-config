@@ -1,0 +1,22 @@
+{
+  "_comment": "Skill Switchboard Rules — event-driven SKILL injection only. Rules from ~/.claude/rules/ are already in the system prompt and should NOT be duplicated here.",
+  "_docs": "Each rule fires when tool (Edit/Write) touches a file matching ALL conditions in matchers. Only add rules that inject SKILLS not already loaded via ~/.claude/rules/.",
+  "rules": [
+    {
+      "name": "dashboard-html",
+      "description": "Inject dashboard-creator skill when editing HTML dashboards or diagrams",
+      "enabled": true,
+      "priority": 60,
+      "matchers": {
+        "extensions": [".html"],
+        "directories": [
+          "**/.agent/diagrams/**",
+          "**/dashboards/**",
+          "**/reports/**"
+        ]
+      },
+      "inject_path": "C:/Users/kruz7/.claude/skills/dashboard-creator/SKILL.md",
+      "max_lines": 80
+    }
+  ]
+}
