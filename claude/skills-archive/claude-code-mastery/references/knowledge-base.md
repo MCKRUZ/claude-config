@@ -27,7 +27,6 @@ The production MCP architecture evolved from a local Python mcp-hub (FastMCP wra
 | Context protection | None | `context-mode@context-mode` (mksglu/context-mode) |
 | Status line | Custom jq-based bash command | `claude-hud@claude-hud` (jarrodwatts/claude-hud) |
 | Discord plugin | `discord@claude-plugins-official` | Removed |
-| SDLC plugin | `claude-code-sdlc@local` | Removed |
 
 **context-mode** intercepts large tool outputs (Bash, Read) and routes them through a sandbox with FTS5 indexing — only summaries enter the context window. Key tools: `ctx_batch_execute`, `ctx_search`, `ctx_execute`, `ctx_execute_file`.
 
@@ -51,7 +50,7 @@ The skill's reference architecture (Pillar 3 Tier 0, Pillar 4 production setting
 |------|-------|--------|---------|
 | 2026-04-06 | v2.1.82–v2.1.92 | CLI version check | 11 releases since last update; no major breaking changes |
 | 2026-04-06 | MCP gateway | Production settings | Bifrost replaced mcp-hub; remote gateway pattern documented |
-| 2026-04-06 | Plugin stack | Production settings | context-mode and claude-hud adopted; discord and sdlc removed |
+| 2026-04-06 | Plugin stack | Production settings | context-mode and claude-hud adopted; discord removed |
 | 2026-04-06 | Settings evolution | settings.json diff | skipDangerousModePermissionPrompt, extraKnownMarketplaces added; ANTHROPIC_BASE_URL removed |
 
 ---
@@ -81,7 +80,7 @@ The skill now documents the actual battle-tested setup running on the primary de
 - `opus[1m]` with `alwaysThinkingEnabled`, Langfuse tracing via `ANTHROPIC_BASE_URL` proxy
 - Extended permissions (Glob, Grep, WebSearch pre-allowed; MCP tools pre-allowed)
 - StatusLine showing project/model/context usage
-- Plugin stack: deep-plan/implement, discord, code-simplifier, SDLC gates
+- Plugin stack: deep-plan/implement, discord, code-simplifier
 - Custom agents organized by purpose: engineering/, matts-custom/, testing/, _archived/
 
 **Global Rules Architecture:**
