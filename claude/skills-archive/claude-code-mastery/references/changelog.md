@@ -11,8 +11,8 @@ Synced the skill's reference architecture with the actual production setup as of
 **SKILL.md updates:**
 - **Pillar 2** — Added context-mode plugin documentation as a context management strategy. Updated current version to v2.1.92.
 - **Pillar 3** — Replaced Tier 0 "Hub Architecture" with "MCP Gateway Architecture" documenting both Bifrost (remote HTTP gateway) and local FastMCP wrapping. Updated `mcpNotes` example with actual production entries including hub-mode migration note and config-location note.
-- **Pillar 4** — Updated production settings JSON: replaced `mcp__hub__*`/`mcp__cmem__*` permissions with `mcp__bifrost__*`/`mcp__nexus-local__*` wildcards. Removed `ANTHROPIC_BASE_URL` proxy (Langfuse now via Stop hook only). Replaced jq-based statusLine with claude-hud plugin. Updated enabledPlugins (context-mode + claude-hud replacing discord + sdlc). Added `skipDangerousModePermissionPrompt` and `extraKnownMarketplaces`. Rewrote key patterns explanation.
-- **Pillar 6** — Updated built-in capabilities table: removed sdlc@local and discord, added context-mode and claude-hud plugins with installation info.
+- **Pillar 4** — Updated production settings JSON: replaced `mcp__hub__*`/`mcp__cmem__*` permissions with `mcp__bifrost__*`/`mcp__nexus-local__*` wildcards. Removed `ANTHROPIC_BASE_URL` proxy (Langfuse now via Stop hook only). Replaced jq-based statusLine with claude-hud plugin. Updated enabledPlugins (context-mode + claude-hud replacing discord). Added `skipDangerousModePermissionPrompt` and `extraKnownMarketplaces`. Rewrote key patterns explanation.
+- **Pillar 6** — Updated built-in capabilities table: removed discord, added context-mode and claude-hud plugins with installation info.
 
 **settings-templates.md updates:**
 - Added new "Power User — Plugin-Enhanced" template with context-mode, claude-hud, and extraKnownMarketplaces

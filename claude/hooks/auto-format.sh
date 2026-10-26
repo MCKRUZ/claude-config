@@ -5,8 +5,8 @@
 # Why the adoption test exists
 # ----------------------------
 # This hook used to run its formatter unconditionally. In a repo that never adopted that
-# formatter, that turns every edit into a whole-file rewrite: a three-line change to
-# claude-code-sdlc came back as 936 insertions / 243 deletions, because the repo is
+# formatter, that turns every edit into a whole-file rewrite: a three-line change to one
+# Python repo came back as 936 insertions / 243 deletions, because the repo is
 # hand-written to ~100 columns and Black defaults to 88. Across that repo Black would have
 # rewritten 64 of 69 files. A survey of 56 sibling repos found only 2 declaring a formatter
 # at all, so "just run it" was reformatting code nobody asked it to touch.

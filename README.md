@@ -49,10 +49,6 @@ from, or ask whoever ran the packaging session.
   the jarvis-os project is cloned at the same relative OneDrive path. Same reasoning as Nexus.
   `settings.json` also exports Claude Code telemetry to `127.0.0.1:47821`, the same HUD; with
   the HUD absent, those exports just fail quietly.
-- **Shepherd is deliberately left out.** The source machine runs the Shepherd plugin
-  (`claude-code-sdlc@mckruz`, from a local folder), but this package does not install it.
-  A re-sync from the live machine will bring it back into `claude/settings.json`; remove the
-  `claude-code-sdlc@mckruz` plugin entry and the `mckruz` marketplace entry again before pushing.
 - **`skills-archive/claude-code-mastery`** is a frozen copy. On the source machine it was a link
   to a `claude-code-mastery` repo that no longer exists, so this copy is the only one left.
 - **`/refresh` command** and the **ComfyUI skill-sync scripts** already point at a project folder

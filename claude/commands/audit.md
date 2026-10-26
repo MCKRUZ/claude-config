@@ -8,7 +8,7 @@
 
 You are auditing this Claude Code environment on behalf of the user. Your job is to find out **why Claude forgets context, skips workflow steps, and burns effort**, and to prove each finding with evidence before proposing a fix. You are an investigator, not a fixer: you produce a report and a review branch, and you change nothing on `main`.
 
-The user's environment is heavily customized (hooks, subagents, path-scoped rules, a 9-phase / 7-gate SDLC plugin, `kit` loadouts, Context Governor, Langfuse tracing, Windows + PowerShell, no WSL). Assume every piece of it might be misconfigured, unloaded, silently failing, or fighting another piece. Existence of a config is not evidence it works.
+The user's environment is heavily customized (hooks, subagents, path-scoped rules, `kit` loadouts, Context Governor, Langfuse tracing, Windows + PowerShell, no WSL). Assume every piece of it might be misconfigured, unloaded, silently failing, or fighting another piece. Existence of a config is not evidence it works.
 
 ## Scope of this run
 
@@ -16,7 +16,7 @@ The user's environment is heavily customized (hooks, subagents, path-scoped rule
 2. **This project:** `.claude/` (settings, `settings.local.json`, agents, rules, hooks, skills), `CLAUDE.md` at every level, `AGENTS.md`, `.mcp.json`, and any `kit` loadout or plugin manifests in effect.
 3. **Evidence sources:** session transcripts for this project (default: last 14 days, or `--since`), Langfuse traces via MCP if available, hook logs, git history of `.claude/` and `CLAUDE.md`.
 
-Read-only until Phase 7. Never edit config, run destructive git commands, or touch `main`.
+Read-only until Phase 6. Never edit config, run destructive git commands, or touch `main`.
 
 ---
 
@@ -44,7 +44,6 @@ Before judging anything, produce a plain-language description of how work is *su
 Write a **Workflow Map** the user could hand to a new engineer:
 
 - Entry points: which commands/skills start work (`/spec`, `/plan`, `/implement`, loop skills, `kit` phase switches). For each: what it reads, what it writes, what it hands off to.
-- Phase flow: the SDLC phases in order, the artifact each produces, the gate that ends it, who enforces the gate (Claude, hook, subagent, user).
 - Delegation tree: which agents call which, the handoff contract (what the caller passes, what the callee must return), and where results are persisted.
 - Skills by role: for each skill, the one sentence it exists to do, what triggers it, and what it depends on (MCP, hook, file convention).
 - Memory model: where durable instructions live, where working state lives, what loads at `SessionStart`, what survives compaction.
@@ -88,28 +87,12 @@ Produce a **Workflow Fit Table**: workflow → purpose → still needed (Y/N + w
 
 - Find every compaction event in the transcripts. For each, compare Claude's behavior in the 10 turns before vs. after: did it re-read files it already had, ask a question already answered, drop a constraint the user stated earlier, or restart a phase?
 - Check whether a `PreCompact` hook exists and what it preserves. Check whether Context Governor is actually the thing triggering compaction or whether the built-in counter is still firing first (look for which appears in the transcript).
-- Check whether the compaction summary instructions (if customized) name the SDLC phase, current gate, open decisions, and files in flight. If the summary template does not carry these, the workflow will reset after every compaction.
+- Check whether the compaction summary instructions (if customized) name the current task, open decisions, and files in flight. If the summary template does not carry these, the workflow will reset after every compaction.
 - Measure: average tool calls per session, average turns to first compaction, and the token cost of MCP tool schemas as a share of context. If schemas are >15% of the window, compaction happens too early and forgetting is a symptom of tool bloat.
 
 ---
 
-## Phase 2 — Workflow adherence (SDLC phases and gates)
-
-Treat the SDLC plugin's phases and gates as a spec and test the transcripts against it.
-
-- Extract the declared phase order and each gate's pass criteria from the plugin.
-- For each transcript, reconstruct the phase sequence Claude actually followed (look for phase markers, command invocations, subagent calls, gate checks). Produce a **declared vs. observed** table per session.
-- Classify every deviation:
-  - **Skipped gate** — moved to next phase without the gate's check appearing in the transcript.
-  - **Silent gate** — gate ran but its output was never surfaced to the user.
-  - **Phase restart** — phase re-entered after compaction or subagent return without carrying prior results.
-  - **User-forced skip** — user told Claude to move on. Count these separately; they are workflow-design findings, not Claude-behavior findings.
-- Diagnose why gates get skipped. Common root causes to check explicitly: the gate lives only in prose in CLAUDE.md with no hook or command enforcing it; the phase state is held in conversation memory instead of a file; a subagent runs the gate but its result is not written anywhere the orchestrator reads; the gate check is too expensive so Claude rationalizes past it.
-- For each gate, recommend the **enforcement tier**: prose instruction (weakest) → command the user runs → `PreToolUse`/`Stop` hook that blocks (strongest). Say which gates warrant blocking hooks and what the hook should check.
-
----
-
-## Phase 3 — Efficiency (redundant work and loop waste)
+## Phase 2 — Efficiency (redundant work and loop waste)
 
 - **Redundant reads:** count files read more than once in a session without an intervening edit. List the top offenders and the sessions where it happened.
 - **Repeated searches:** same or near-identical grep/glob/search calls within one session.
@@ -122,7 +105,7 @@ Treat the SDLC plugin's phases and gates as a spec and test the transcripts agai
 
 ---
 
-## Phase 4 — Hooks, agents, rules: are they firing?
+## Phase 3 — Hooks, agents, rules: are they firing?
 
 - For each hook, find evidence of it running in transcripts or hook logs. Hooks with zero executions in 14 days are candidates for "misconfigured matcher" or "wrong shell". Test each hook command in isolation under PowerShell and record exit code and output.
 - For each agent: how often was it invoked, by whom (user vs. orchestrator), and did its output get used? An agent that is defined but never delegated to is either unnecessary or the orchestrator does not know when to call it — check whether CLAUDE.md tells Claude when to use it.
@@ -131,7 +114,7 @@ Treat the SDLC plugin's phases and gates as a spec and test the transcripts agai
 
 ---
 
-## Phase 5 — Tool and MCP hygiene
+## Phase 4 — Tool and MCP hygiene
 
 - MCP servers with zero tool calls in 14 days → recommend removal from default loadout (move to a `kit` phase or on-demand).
 - Servers exposing >20 tools → recommend `disabledTools` / allowlist so only the used subset loads.
@@ -141,7 +124,7 @@ Treat the SDLC plugin's phases and gates as a spec and test the transcripts agai
 
 ---
 
-## Phase 6 — Scoring
+## Phase 5 — Scoring
 
 Score each area 0–10 with a one-line justification and the single highest-leverage fix:
 
@@ -149,7 +132,6 @@ Score each area 0–10 with a one-line justification and the single highest-leve
 |---|---|---|---|
 | Cross-session continuity | | | |
 | In-session continuity (compaction) | | | |
-| SDLC gate enforcement | | | |
 | Efficiency / loop discipline | | | |
 | Hooks & agents actually firing | | | |
 | Tool/MCP hygiene | | | |
@@ -158,11 +140,11 @@ Then list the **top 5 root causes**, ranked by how many findings they explain. P
 
 ---
 
-## Phase 7 — Deliverables
+## Phase 6 — Deliverables
 
-1. **Report** — `.claude/audit/AUDIT-<yyyy-MM-dd>.md` containing Phases 0–6. Lead with the Phase 0.5 Workflow Map and Fit Table — the user should understand the system before reading what is wrong with it. Also write the Workflow Map to `.claude/audit/WORKFLOW-MAP.md` as a standalone doc, since it is useful beyond this audit. Every finding must cite evidence: transcript file + turn index, Langfuse trace ID, or config file + line. A finding with no evidence is a hypothesis; label it as such and put it in a separate section.
+1. **Report** — `.claude/audit/AUDIT-<yyyy-MM-dd>.md` containing Phases 0–5. Lead with the Phase 0.5 Workflow Map and Fit Table — the user should understand the system before reading what is wrong with it. Also write the Workflow Map to `.claude/audit/WORKFLOW-MAP.md` as a standalone doc, since it is useful beyond this audit. Every finding must cite evidence: transcript file + turn index, Langfuse trace ID, or config file + line. A finding with no evidence is a hypothesis; label it as such and put it in a separate section.
 2. **Review branch** — `audit/<yyyy-MM-dd>`. Commit the proposed fixes as separate commits, one per root cause, each with a message that names the finding it addresses. Never commit to `main`. Never modify transcripts.
-3. **Summary to the user** — under 300 words: the three things most responsible for forgetting and skipped gates, what the branch changes, and what you could not verify.
+3. **Summary to the user** — under 300 words: the three things most responsible for forgetting and skipped workflow steps, what the branch changes, and what you could not verify.
 
 Fixes you may propose on the branch: CLAUDE.md restructuring (instructions vs. state split), new or corrected hooks, corrected rule globs, `PreCompact` summary template, MCP allowlists, `kit` loadout changes, agent invocation guidance, loop termination criteria.
 
