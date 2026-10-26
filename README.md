@@ -6,7 +6,7 @@ config you'd actually recognize as "your settings": `CLAUDE.md`, rules, custom a
 commands, hooks, skills, profiles, and the MCP server list.
 
 Started ~1.7 GB on the source machine (mostly session history, plugin caches, and logs). This
-package is **~52 MB**.
+package is **~45 MB**. Last refreshed from the live machine on 2026-10-26.
 
 ## Install order
 
@@ -31,8 +31,11 @@ package is **~52 MB**.
 | `.credentials.json` | live Claude auth token — run `claude login` instead |
 | All 44 vault secrets | DPAPI-encrypted per user+machine, the files are useless elsewhere — see `SECRETS-CHECKLIST.md` |
 | `plugins/cache/` (1.1 GB), `plugins/marketplaces/` (454 MB) | downloaded plugin content — `install.ps1` replays the marketplace + install commands instead of copying the cache |
-| `semgrep-rules/` (vendored upstream clone), `github-mcp-server.exe` (25 MB binary) | third-party content better fetched fresh — see `PREREQUISITES.md` |
-| Nested `.git` directories found inside several skill folders and the archived `claude-code-mastery` package | clone history, not settings — stripped so this package is one clean repo, not a nest of embedded repos |
+| `semgrep-rules/` (vendored upstream clone), `github-mcp-server.exe` (25 MB binary), `mcp-servers/blender-agent-studio/` (upstream clone) | third-party content better fetched fresh — see `PREREQUISITES.md` |
+| `mods/claude-code-playground/` | upstream clone that backs a plugin marketplace — `install.ps1` re-clones it |
+| `skills/synced/` | claude.ai-managed skills, re-synced by the app on sign-in |
+| Nested `.git`, `node_modules`, `__pycache__` folders inside skill folders and the archived `claude-code-mastery` package | clone history and build output, not settings — stripped so this package is one clean repo, not a nest of embedded repos |
+| `*.bak-*`, `*.before-*`, `*.log` files | backups and logs, not live config |
 
 Full reasoning for every inclusion/exclusion decision: see the build plan this package was made
 from, or ask whoever ran the packaging session.
@@ -42,6 +45,16 @@ from, or ask whoever ran the packaging session.
 - **Nexus project hooks** (3 of them) will no-op unless you separately clone+build the Nexus
   project at the same relative OneDrive path. Not part of this package — it's a full codebase,
   not a Claude Code setting.
+- **jarvis-os hooks** (the HUD forwarder and the statusline's rate-limit tap) stay silent unless
+  the jarvis-os project is cloned at the same relative OneDrive path. Same reasoning as Nexus.
+  `settings.json` also exports Claude Code telemetry to `127.0.0.1:47821`, the same HUD; with
+  the HUD absent, those exports just fail quietly.
+- **Shepherd is deliberately left out.** The source machine runs the Shepherd plugin
+  (`claude-code-sdlc@mckruz`, from a local folder), but this package does not install it.
+  A re-sync from the live machine will bring it back into `claude/settings.json`; remove the
+  `claude-code-sdlc@mckruz` plugin entry and the `mckruz` marketplace entry again before pushing.
+- **`skills-archive/claude-code-mastery`** is a frozen copy. On the source machine it was a link
+  to a `claude-code-mastery` repo that no longer exists, so this copy is the only one left.
 - **`/refresh` command** and the **ComfyUI skill-sync scripts** already point at a project folder
   that doesn't exist on the source machine either — not something this migration broke.
 - **`wt-local` plugin marketplace** is skipped automatically (sources from a Windows Terminal
@@ -51,9 +64,10 @@ from, or ask whoever ran the packaging session.
 
 ```
 claude/           -> installs to ~/.claude
-agents-skills/    -> installs to ~/.agents/skills   (3 symlinks in claude/skills/ point here)
+agents-skills/    -> installs to ~/.agents/skills   (linked into ~/.claude/skills and skills-archive)
 devsecrets/       -> installs to ~/.devsecrets       (vault tooling only, no secret values)
-mcpServers.json   -> the 13 MCP server registrations, replayed via `claude mcp add-json`
+links.json        -> which ~/.claude skill folders are links into ~/.agents/skills
+mcpServers.json   -> the user-scope MCP server registrations, replayed via `claude mcp add-json`
 install.ps1       -> the installer
 verify.ps1        -> post-install health check
 SECRETS-CHECKLIST.md, PREREQUISITES.md -> exactly what they say

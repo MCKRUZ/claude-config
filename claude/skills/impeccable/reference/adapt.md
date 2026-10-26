@@ -1,3 +1,31 @@
+## Contents
+
+- Assess Adaptation Challenge
+- Plan Adaptation Strategy
+  - Mobile Adaptation (Desktop → Mobile)
+  - Tablet Adaptation (Hybrid Approach)
+  - Desktop Adaptation (Mobile → Desktop)
+  - Print Adaptation (Screen → Print)
+  - Email Adaptation (Web → Email)
+- Implement Adaptations
+  - Responsive Breakpoints
+  - Layout Adaptation Techniques
+  - Touch Adaptation
+  - Content Adaptation
+  - Navigation Adaptation
+- Verify Adaptations
+- Reference Material
+  - Responsive Design
+    - Mobile-First: Write It Right
+    - Breakpoints: Content-Driven
+    - Detect Input Method, Not Just Screen Size
+    - Safe Areas: Handle the Notch
+    - Responsive Images: Get It Right
+      - srcset with Width Descriptors
+      - Picture Element for Art Direction
+    - Layout Adaptation Patterns
+    - Testing: Don't Trust DevTools Alone
+
 > **Additional context needed**: target platforms/devices and usage contexts.
 
 Adapt an existing design to a different context: another screen size, device, platform, or use case. The trap is treating adaptation as scaling. The job is rethinking the experience for the new context.

@@ -1,3 +1,20 @@
+## Contents
+
+- Diagnostic Scan
+  - 1. Accessibility (A11y)
+  - 2. Performance
+  - 3. Theming
+  - 4. Responsive Design
+  - 5. Implementation Integrity (CRITICAL)
+- Generate Report
+  - Audit Health Score
+  - Implementation Integrity Verdict
+  - Executive Summary
+  - Detailed Findings by Severity
+  - Patterns & Systemic Issues
+  - Positive Findings
+- Recommended Actions
+
 Run systematic **technical** quality checks and generate a comprehensive report. Don't fix issues; document them for other commands to address.
 
 This is a code-level audit, not a design critique. Check what's measurable and verifiable in the implementation.

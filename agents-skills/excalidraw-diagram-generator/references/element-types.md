@@ -1,5 +1,48 @@
 # Excalidraw Element Types Guide
 
+## Contents
+
+- Element Type Overview
+- Rectangle
+  - Properties
+  - Use Cases
+  - Size Guidelines
+  - Example
+- Ellipse
+  - Properties
+  - Use Cases
+  - Size Guidelines
+  - Example
+- Diamond
+  - Properties
+  - Use Cases
+  - Size Guidelines
+  - Example
+- Arrow
+  - Properties
+  - Arrow Directions
+    - Horizontal (Left to Right)
+    - Vertical (Top to Bottom)
+    - Diagonal
+  - Arrow Styles
+  - Adding Arrow Labels
+- Line
+  - Properties
+  - Use Cases
+  - Multi-Point Line Example
+- Text
+  - Properties
+  - Font Sizes by Purpose
+  - Width/Height Calculation
+  - Text Positioning
+  - Example: Title
+  - Example: Annotation
+- Combining Elements
+  - Pattern: Labeled Box
+  - Pattern: Connected Boxes
+  - Pattern: Decision Tree
+- Summary
+
 Detailed specifications for each Excalidraw element type with visual examples and use cases.
 
 ## Element Type Overview

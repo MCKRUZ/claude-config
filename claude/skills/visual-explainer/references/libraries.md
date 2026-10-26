@@ -1,5 +1,20 @@
 # External Libraries (CDN)
 
+## Contents
+
+- Mermaid.js — Diagramming Engine
+  - Deep Theming
+  - Hand-Drawn Mode
+  - CSS Overrides on Mermaid SVG
+  - classDef Gotchas
+  - stateDiagram-v2 Label Limitations
+  - Writing Valid Mermaid
+  - Diagram Type Examples
+  - Dark Mode Handling
+- Chart.js — Data Visualizations
+- anime.js — Orchestrated Animations
+- Google Fonts — Typography
+
 Optional CDN libraries for cases where pure CSS/HTML isn't enough. Only include what the diagram actually needs — most diagrams need zero external JS.
 
 ## Mermaid.js — Diagramming Engine

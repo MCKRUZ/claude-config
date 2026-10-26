@@ -1,3 +1,17 @@
+## Contents
+
+- Assess Hardening Needs
+- Hardening Dimensions
+  - Text Overflow & Wrapping
+  - Internationalization (i18n)
+  - Error Handling
+  - Edge Cases & Boundary Conditions
+  - Input Validation & Sanitization
+  - Accessibility Resilience
+  - Performance Resilience
+- Testing Strategies
+- Verify Hardening
+
 Designs that only work with perfect data aren't production-ready. Harden the interface against the inputs, errors, languages, and network conditions that real users will throw at it.
 
 ## Assess Hardening Needs

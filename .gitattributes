@@ -1,0 +1,2 @@
+# Shell scripts run under Git Bash; keep them LF on every checkout regardless of core.autocrlf.
+*.sh text eol=lf

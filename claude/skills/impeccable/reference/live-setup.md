@@ -1,3 +1,13 @@
+## Contents
+
+- Write the config
+- Config drift
+- CSP detection (first-time only)
+  - Consent prompt (use this phrasing)
+  - append-arrays
+  - append-string
+- Troubleshooting
+
 One-time live-mode project setup. Loaded from [live.md](live.md) only when `live.mjs` reports `config_missing` / `config_invalid`, when `configDrift` needs handling, or when the config lacks `cspChecked`. Not part of the per-session hot path.
 
 ## Write the config

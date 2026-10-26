@@ -31,10 +31,6 @@ Flow: `resolve-library-id` → `query-docs`.
 
 Official Microsoft/Azure/.NET documentation, more reliable and more current than general web search for Microsoft APIs. Reach when working on .NET, ASP.NET Core, EF Core, Azure SDK, Bicep, ARM schema, or M365, or verifying an SDK method, Azure CLI flag, or Bicep property.
 
-### sequential-thinking — structured multi-step reasoning
-
-Forces explicit branching, revision, and hypothesis-testing. Overhead isn't worth it for routine work. Reach when weighing architectural trade-offs, debugging an issue whose root cause is unclear, or planning across 3+ files.
-
 ### youtube — programmatic video data
 
 Transcripts, statistics, comments, and channel data. Reach when the user references a specific video or channel, or the best technical content on a topic lives in video form (conference talks, deep-dive walkthroughs).
@@ -66,6 +62,36 @@ Points at the self-hosted Firecrawl engine on the NAS (`http://bablyon:3002`).
 Verified working 2026-08-06: 12/12 scrapes succeeded, averaging 0.8s. The 19% success rate seen historically was Bifrost's own request timeout, not the engine — removing the gateway fixed it.
 
 > **Caveat:** the NAS is resource-constrained (load average ~7 on 4 cores, ~2 GB swap in use) and Firecrawl sheds load when the box is busy, logging `Can't accept connection due to RAM/CPU load`. Scrapes can fail in bursts under load and succeed on retry. If failures become frequent rather than occasional, the fix is to give the NAS headroom or raise Firecrawl's `MAX_CPU`/`MAX_RAM` thresholds — not to blame the MCP server.
+
+### donsetch — token-lean web fetch, search, crawl
+
+Local binary (`C:\Users\kruz7\tools\donsetch\donsetch.exe mcp`). Wins over firecrawl on token economy for plain pages. Fails on Reddit; its npm install is broken on Windows, so keep the standalone `.exe`. See memory `donsetch-vs-firecrawl`.
+
+### nexus-local — cross-project memory
+
+Direct stdio server (`MCKRUZ\Nexus\packages\mcp\dist\index.js`). Query rules live in `rules/nexus-memory.md`. Auto-allowed in `settings.json`.
+
+### comfy-mcp — ComfyUI control
+
+Drives the local ComfyUI (`127.0.0.1:8188`), never Comfy Cloud. Start with `server_info`. Deferred tools — load schemas via ToolSearch.
+
+### readwise — Readwise highlights and Reader documents
+
+Remote HTTP (`mcp2.readwise.io`). Reach when the user references saved highlights, their Reader inbox or library.
+
+### blender-agent-studio — Blender scene tools
+
+Runs under `bun` from `C:\Users\kruz7\.claude\mcp-servers\blender-agent-studio\`. Reach only for Blender modelling and render tasks.
+
+### tiktok-apify / instagram-apify — social search
+
+Apify-backed, launched through `launch.js` (`APIFY_TOKEN`). Same pattern as `reddit-apify`. Rarely used (1 call each in 30 days as of 2026-10-13).
+
+## Account and plugin servers (not in `~/.claude.json`)
+
+- **claude.ai connectors** (Gmail, Google Calendar, Google Drive, Dropbox, Hugging Face, Claude Docs) follow the claude.ai account. Add or remove them in claude.ai Settings > Connectors; `claude mcp remove` does not touch them.
+- **Plugin-bundled servers** (`context-mode`, `desktop-commander`) come with their plugin. Disable the plugin, not the server.
+- **Removed 2026-10-13 (MCP audit):** `sequential-thinking`, the `design@synced` plugin and its 7 never-connecting servers, plus the Canva, Floot, Microsoft 365 and Mermaid Chart connectors, which still need disconnecting by hand in claude.ai Settings > Connectors.
 
 ## Not migrated
 

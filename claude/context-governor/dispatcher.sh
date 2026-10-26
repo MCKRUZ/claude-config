@@ -22,6 +22,9 @@ input=$(cat)
 # Gauge logger: fire-and-forget, fully silenced. Must never block or speak.
 printf '%s' "$input" | "$NODE" "$CONFIG_DIR/context-governor/gauge-logger.mjs" >/dev/null 2>&1 &
 
+# Jarvis: keep the subscription's rate-limit figures for the HUD. Same rules: silent, backgrounded.
+printf '%s' "$input" | "$NODE" "/c/Users/kruz7/OneDrive/Documents/Code Repos/MCKRUZ/jarvis-os/app/packages/claude-code/tools/limits-tap.mjs" >/dev/null 2>&1 &
+
 # claude-hud: the visible statusline. Resolve the highest installed version dir.
 plugin_dir=$(ls -d "$CONFIG_DIR"/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null \
   | awk -F/ '{ print $(NF-1) "\t" $0 }' \

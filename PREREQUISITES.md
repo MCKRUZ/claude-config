@@ -9,7 +9,7 @@ Claude Code from starting.
 - **Claude Code** — install and run `claude login` once, so `~/.claude.json` and
   `~/.claude/.credentials.json` exist. Do this before running `install.ps1`.
 - **Developer Mode** (Settings → Privacy & Security → For developers) or an elevated shell —
-  needed for `install.ps1` to create the 3 skill symlinks. Without it, the installer falls back
+  needed for `install.ps1` to create the skill symlinks listed in `links.json`. Without it, the installer falls back
   to directory junctions, which work for local reads but won't match a real symlink's behavior
   if something inspects link type.
 
@@ -30,6 +30,8 @@ install.
 | **`semgrep`** | 3 semgrep hook scripts, security-reviewer agent | needs the ruleset too — see below |
 | **`prettier`, `jq`** | `auto-format.sh`, `config-protection.ps1` | |
 | **Ollama** | `ollama_task_delegate.py` (currently disabled via `CLAUDE_DISABLED_HOOKS`) | only matters if you re-enable it |
+| **`bun`** | `blender-agent-studio` MCP server | |
+| **`git`** | `install.ps1` (clones the `claude-code-playground` mods marketplace) | ships with Git for Windows |
 
 ## Things this package deliberately does not carry — get them separately
 
@@ -38,8 +40,15 @@ install.
 | **`semgrep-rules/`** | was a full vendored clone of `semgrep/semgrep-rules` (9.6 MB, its own git history) — re-cloning is more current than a frozen copy | `git clone https://github.com/semgrep/semgrep-rules ~/.claude/hooks/semgrep-rules` |
 | **`github-mcp-server.exe`** | 25 MB versioned binary (currently v1.8.0), not config | Download `github-mcp-server_Windows_x86_64.zip` from the `github/github-mcp-server` GitHub releases page, extract into `~/.claude/mcp-servers/github-mcp-server/` |
 | **The Nexus project** | a full separate codebase under `OneDrive\...\MCKRUZ\Nexus`, not part of Claude Code config | Clone it to the same relative path and build it (`packages/cli`, `packages/mcp`), or accept that 3 hooks (UserPromptSubmit, SessionStart sync, SessionEnd post-session) will silently no-op |
-| **`donsetch.exe`, `comfy-mcp.exe`** | user-installed tools outside `~/.claude`, referenced by 2 of the 13 MCP servers | reinstall those tools if you want those MCP servers to work; otherwise remove the entries from `~/.claude.json` |
+| **`blender-agent-studio`** | upstream clone (24 MB, its own git history) used by the MCP server of the same name | `git clone https://github.com/ifBars/blender-agent-studio ~/.claude/mcp-servers/blender-agent-studio`. The registration also hardcodes `BLENDER_EXECUTABLE=F:\Blender 5.2\blender.exe` — fix it in `~/.claude.json` to match your Blender install |
+| **`rea` (reverse-engineering MCP server)** | global npm package plus Ghidra and a JDK, all at machine-specific paths | `npm i -g rea-agents`, install Ghidra 12.1.4 and JDK 21, then fix the `command`, `GHIDRA_INSTALL_DIR` and `JAVA_HOME` values in `~/.claude.json` (registered as `C:\nvm4w\nodejs\...`, `C:\Tools\ghidra_12.1.4_PUBLIC`, `C:\Tools\jdk-21.0.12.1+1`) |
+| **The jarvis-os project** | a separate codebase under `OneDrive\...\MCKRUZ\jarvis-os` | Clone it to the same relative path, or accept that the HUD hooks (`jarvis-hud-forward.mjs`) and the statusline's rate-limit tap stay silent. Both fail quietly, so nothing errors |
+| **`donsetch.exe`, `comfy-mcp.exe`** | user-installed tools outside `~/.claude`, referenced by 2 MCP servers | reinstall those tools if you want those MCP servers to work; otherwise remove the entries from `~/.claude.json` |
 | **`wt-local` plugin marketplace** | sources from a Windows Terminal Canary preview app's local staging path — machine-specific by nature | `install.ps1` skips it automatically; reinstall manually only if that terminal app is on this machine |
+
+## Needs a sign-in on first use
+
+- **`readwise` MCP server** — remote server using OAuth. The first call opens a browser sign-in; nothing to pre-configure.
 
 ## Already broken on the source machine — not a migration regression
 

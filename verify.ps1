@@ -7,6 +7,7 @@
 
 $ErrorActionPreference = 'Continue'
 $targetHome = $env:USERPROFILE
+$scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ok = { param($m) Write-Host "  [OK] $m" -ForegroundColor Green }
 $bad = { param($m) Write-Host "  [!!] $m" -ForegroundColor Red }
 $warn = { param($m) Write-Host "  [??] $m" -ForegroundColor Yellow }
@@ -36,9 +37,11 @@ if ($leftover.Count -eq 0) {
     $leftover | ForEach-Object { Write-Host "       $_" -ForegroundColor Red }
 }
 
-Write-Host "`n-- Skill symlinks --"
-foreach ($name in @('excalidraw-diagram-generator', 'find-skills', 'shannon')) {
-    $p = Join-Path $targetHome ".claude\skills\$name"
+Write-Host "`n-- Skill links --"
+$links = (Get-Content -LiteralPath (Join-Path $scriptRoot 'links.json') -Raw | ConvertFrom-Json).links
+foreach ($entry in $links) {
+    $name = $entry.link
+    $p = Join-Path $targetHome $entry.link
     $item = Get-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue
     if ($item -and ($item.LinkType -in @('SymbolicLink', 'Junction'))) {
         & $ok "$name ($($item.LinkType))"
@@ -52,7 +55,7 @@ foreach ($name in @('excalidraw-diagram-generator', 'find-skills', 'shannon')) {
 Write-Host "`n-- MCP servers --"
 try {
     $mcpList = & claude mcp list 2>&1
-    $expected = @('nexus-local','context7','sequential-thinking','playwright','chrome-devtools','firecrawl','youtube','reddit-apify','microsoft-learn','searxng','github','donsetch','comfy-mcp')
+    $expected = (Get-Content -LiteralPath (Join-Path $scriptRoot 'mcpServers.json') -Raw | ConvertFrom-Json).PSObject.Properties.Name
     foreach ($name in $expected) {
         if ($mcpList -match [regex]::Escape($name)) { & $ok $name } else { & $bad "$name not registered" }
     }
@@ -89,7 +92,14 @@ if (Test-Path -LiteralPath $devsecrets) {
 Write-Host "`n-- External dependencies (informational, not auto-fixable) --"
 $nexus = Join-Path $targetHome 'OneDrive\Documents\Code Repos\MCKRUZ\Nexus\packages\cli\dist\index.js'
 if (Test-Path -LiteralPath $nexus) { & $ok "Nexus project found" } else { & $warn "Nexus project not found — 3 hooks (UserPromptSubmit, SessionStart sync, SessionEnd) will no-op" }
-$ghMcp = Join-Path $targetHome '.claude\mcp-servers\github-mcp-server\github-mcp-server.exe'
-if (Test-Path -LiteralPath $ghMcp) { & $ok "github-mcp-server.exe found" } else { & $warn "github-mcp-server.exe not found — download it, see PREREQUISITES.md" }
+$jarvis = Join-Path $targetHome 'OneDrive\Documents\Code Repos\MCKRUZ\jarvis-os'
+if (Test-Path -LiteralPath $jarvis) { & $ok "jarvis-os project found" } else { & $warn "jarvis-os project not found — the HUD hooks and statusline rate-limit tap will no-op" }
+$externals = @(
+    @{ Name = 'github-mcp-server.exe'; Path = '.claude\mcp-servers\github-mcp-server\github-mcp-server.exe' },
+    @{ Name = 'blender-agent-studio';  Path = '.claude\mcp-servers\blender-agent-studio\plugins\blender-agent-studio\mcp\server.ts' }
+)
+foreach ($x in $externals) {
+    if (Test-Path -LiteralPath (Join-Path $targetHome $x.Path)) { & $ok "$($x.Name) found" } else { & $warn "$($x.Name) not found — see PREREQUISITES.md" }
+}
 
 Write-Host "`n=== Verification complete ===" -ForegroundColor Cyan

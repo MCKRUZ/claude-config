@@ -1,5 +1,17 @@
 # Init flow
 
+## Contents
+
+- Step 1: Load current state
+- Step 2: Explore the project
+- Step 3: Interview for product truth
+  - What belongs here
+  - What does not belong here
+- Step 4: Write PRODUCT.md
+  - Completion gate
+- Step 5: Record workflow defaults
+- Step 6: Wrap up or resume
+
 `init` captures durable product truth in PRODUCT.md. It does not invent a visual world and does not write DESIGN.md; [new-work.md](new-work.md) creates or expands one, and [document.md](document.md) records an incumbent one. Existing runnable web projects may also receive `.impeccable/live/config.json`.
 
 ## Step 1: Load current state

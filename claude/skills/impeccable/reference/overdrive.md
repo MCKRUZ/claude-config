@@ -1,3 +1,26 @@
+## Contents
+
+- Propose Before Building
+- Iterate with Browser Automation
+- Assess What "Extraordinary" Means Here
+  - For visual/marketing surfaces
+  - For functional UI
+  - For performance-critical UI
+  - For data-heavy interfaces
+- The Toolkit
+  - Make transitions feel cinematic
+  - Tie animation to scroll position
+  - Render beyond CSS
+  - Make data feel alive
+  - Animate complex properties
+  - Push performance boundaries
+  - Interact with the device
+- Implement with Discipline
+  - Progressive enhancement is non-negotiable
+  - Performance rules
+  - Polish is the difference
+- Verify the Result
+
 Start your response with:
 
 ```

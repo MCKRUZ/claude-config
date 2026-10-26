@@ -1,3 +1,29 @@
+## Contents
+
+- The frontmatter: token schema
+- The markdown body: eight sections (canonical order)
+- When to run
+- Two paths
+- Scan mode (approach C: auto-extract, then confirm descriptive language)
+  - Step 1: Find the design assets
+  - Step 2: Auto-extract what can be auto-extracted
+  - Step 2b: Stage the frontmatter
+  - Step 3: Ask the user for qualitative language
+  - Step 4: Write DESIGN.md
+  - Step 4b: Write .impeccable/design.json sidecar (extensions only)
+    - Schema
+    - Component translation rules
+    - What to include
+    - Tonal ramps
+    - Narrative mapping
+  - Step 5: Confirm and refine
+- Seed mode
+  - Step 1: Route through new-work's workshop
+  - Step 2: Write seed DESIGN.md
+  - Step 3: Confirm
+- Style guidelines
+- Pitfalls
+
 Generate a `DESIGN.md` file at the project root that captures the current visual design system, so AI agents generating new screens stay on-brand.
 
 DESIGN.md follows the [official DESIGN.md format spec](https://raw.githubusercontent.com/google-labs-code/design.md/main/docs/spec.md): optional YAML frontmatter carrying machine-readable design tokens, followed by up to eight markdown sections in a fixed order. **Tokens are normative; prose provides context for how to apply them.** Sections may be omitted when not relevant, but those present stay in the specified order. Use the canonical headings below so the file remains portable across DESIGN.md-aware tools.
