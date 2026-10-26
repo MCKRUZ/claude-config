@@ -1,5 +1,18 @@
 # New visual work
 
+## Contents
+
+- 1. Decide what is already true
+- 2. Ask what will change the work
+- 3. Choose the right amount of invention
+  - Extend an existing surface
+  - Create a whole surface inside an established world
+  - Create or replace the visual world
+- 4. Commit the world
+- 5. Record the decision
+- 6. Build with full commitment
+- 7. Inspect and finish
+
 Use this flow for a new surface or a replacement visual identity. PRODUCT.md owns product truth. DESIGN.md owns durable visual decisions. A surface brief keeps strategy that belongs to one route or artifact. Complete [init.md](init.md) first when PRODUCT.md is missing; a missing DESIGN.md does not route back to init.
 
 ## 1. Decide what is already true

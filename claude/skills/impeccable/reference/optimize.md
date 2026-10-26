@@ -1,3 +1,19 @@
+## Contents
+
+- Assess Performance Issues
+- Optimization Strategy
+  - Loading Performance
+  - Rendering Performance
+  - Animation Performance
+  - React/Framework Optimization
+  - Network Optimization
+- Core Web Vitals Optimization
+  - Largest Contentful Paint (LCP < 2.5s)
+  - Interaction to Next Paint (INP < 200ms)
+  - Cumulative Layout Shift (CLS < 0.1)
+- Performance Monitoring
+- Verify Improvements
+
 Performance is a feature. Identify the actual bottleneck for THIS interface, fix it, then measure. Don't optimize what isn't slow.
 
 ## Assess Performance Issues

@@ -1,3 +1,66 @@
+## Contents
+
+- Purpose
+- Hard Invariants
+- Setup
+- Assessment Orchestration
+- Assessment A: Design Review
+- Assessment B: Detector + Browser Evidence
+- Generate Combined Critique Report
+  - Report header provenance
+  - Design Health Score
+  - Design Specificity Verdict
+  - Overall Impression
+  - What's Working
+  - Priority Issues
+  - Persona Red Flags
+  - Minor Observations
+  - Questions to Consider
+- Deliver the Report
+- Persist the Snapshot
+- Ask the User
+- Recommended Actions
+  - Action Summary
+- Reference Material
+  - Cognitive Load Assessment
+    - Three Types of Cognitive Load
+      - Intrinsic Load: The Task Itself
+      - Extraneous Load: Bad Design
+      - Germane Load: Learning Effort
+    - Cognitive Load Checklist
+    - The Working Memory Rule
+    - Common Cognitive Load Violations
+      - 1. The Wall of Options
+      - 2. The Memory Bridge
+      - 3. The Hidden Navigation
+      - 4. The Jargon Barrier
+      - 5. The Visual Noise Floor
+      - 6. The Inconsistent Pattern
+      - 7. The Multi-Task Demand
+      - 8. The Context Switch
+  - Heuristics Scoring Guide
+    - Nielsen's 10 Heuristics
+      - 1. Visibility of System Status
+      - 2. Match Between System and Real World
+      - 3. User Control and Freedom
+      - 4. Consistency and Standards
+      - 5. Error Prevention
+      - 6. Recognition Rather Than Recall
+      - 7. Flexibility and Efficiency of Use
+      - 8. Aesthetic and Minimalist Design
+      - 9. Help Users Recognize, Diagnose, and Recover from Errors
+      - 10. Help and Documentation
+    - Score Summary
+    - Issue Severity (P0–P3)
+  - Persona-Based Design Testing
+    - 1. Impatient Power User: "Alex"
+    - 2. Confused First-Timer: "Jordan"
+    - 3. Accessibility-Dependent User: "Sam"
+    - 4. Deliberate Stress Tester: "Riley"
+    - 5. Distracted Mobile User: "Casey"
+    - Selecting Personas
+    - Project-Specific Personas
+
 ### Purpose
 
 Resolve one stable target, run two independent assessments, synthesize a design critique, persist a snapshot, and ask the user what to improve next. The chat response is the primary deliverable; the snapshot is an archive/backlog for future commands.

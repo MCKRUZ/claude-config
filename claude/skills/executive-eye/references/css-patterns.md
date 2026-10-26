@@ -1,5 +1,24 @@
 # CSS patterns for executive briefings
 
+## Contents
+
+- Theme setup
+- Depth tiers — encode importance with elevation
+- The ask — a callout that can't be missed
+- Section labels & key-point cards
+- Status & risk pills
+- Recessed detail with collapse (optional, vanilla JS)
+- Overflow protection (always include)
+- Editorial article patterns (editorial render mode)
+  - Reading measure & typography
+  - TL;DR / executive-read box
+  - Pull quote
+  - Stat / number card
+  - Figure with caption / placeholder
+  - Feature cards + "the catch" callout + analogy aside (breaking up walls of text)
+  - Sticky section TOC (desktop sidebar, mobile collapsible)
+- Don'ts
+
 Self-contained CSS for the HTML briefing produced by Render. Everything inlines into one `<style>` block. Stay in the **executive band** (editorial, corporate-muted, blueprint, high-contrast) — sober, authoritative, high legibility. No neon, no glow, no sketch.
 
 ## Theme setup

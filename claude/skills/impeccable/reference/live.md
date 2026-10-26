@@ -1,3 +1,37 @@
+## Contents
+
+- Prerequisites
+- The contract (read once)
+- Poll loop
+- Start
+- Recovery commands
+- Handle `generate`
+  - Insert mode branch
+  - Replace mode (default)
+  - 1. Read the screenshot (if present)
+  - 2. Wrap the element
+  - 3. Load the action's reference
+  - 4. Plan three variants: identity first, then mode, then axes
+    - Phase A: Extract the identity (non-skippable)
+    - Phase B: Pick mode (default vs departure)
+    - Phase C: Plan three variants
+    - Phase D: Squint test
+  - 5. Apply the freeform prompt (if present)
+  - 6. Deliver variants
+  - 7. Parameters (composition-sized, 0-4 per variant)
+  - 8. Signal done
+  - Aborting an in-flight session
+- Handle fallback
+- Handle `accept`
+  - Required after accept (carbonize)
+- Handle `discard`
+- Handle `steer`
+- Handle `prefetch`
+- Handle `manual_edit_apply`
+- Exit
+- Cleanup
+- First-time setup
+
 Interactive live variant mode: select elements in the browser, pick a design action, and get AI-generated HTML+CSS variants hot-swapped via the dev server's HMR.
 
 ## Prerequisites

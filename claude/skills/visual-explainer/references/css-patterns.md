@@ -1,5 +1,50 @@
 # CSS Patterns for Diagrams
 
+## Contents
+
+- Theme Setup
+- Background Atmosphere
+- Section / Node Cards
+- Overflow Protection
+  - Global rules
+  - Side-by-side comparison panels
+  - Never use `display: flex` on `<li>` for marker characters
+- Mermaid Zoom Controls
+  - CSS
+  - HTML
+  - JavaScript
+- Grid Layouts
+  - Architecture Diagram (2-column with sidebar)
+  - Pipeline (horizontal steps)
+  - Card Grid (dashboard / metrics)
+  - Data Tables
+    - Status Indicators
+    - Table Summary Row
+    - Sticky First Column (for very wide tables)
+- Connectors
+  - CSS Arrow (vertical, between stacked sections)
+  - CSS Arrow (horizontal, between inline steps)
+  - SVG Curved Connector (between arbitrary nodes)
+- Animations
+  - Staggered Fade-In on Load
+  - Hover Lift
+  - Scale-Fade (for KPI cards, badges, status indicators)
+  - SVG Draw-In (for connectors, progress rings, path elements)
+  - CSS Counter (for hero numbers without JS)
+  - Choreography
+  - Respect Reduced Motion
+- Sparklines and Simple Charts (Pure SVG)
+- Responsive Breakpoint
+- Badges and Tags
+- Lists Inside Nodes
+- KPI / Metric Cards
+- Before / After Panels
+- Collapsible Sections
+- Generated Images
+  - Hero Banner
+  - Inline Illustration
+  - Side Accent
+
 Reusable patterns for layout, connectors, theming, and visual effects in self-contained HTML diagrams.
 
 ## Theme Setup

@@ -1,3 +1,28 @@
+## Contents
+
+- Assess Onboarding Needs
+- Onboarding Principles
+  - Show, Don't Tell
+  - Make It Optional (When Possible)
+  - Time to Value
+  - Context Over Ceremony
+  - Respect User Intelligence
+- Design Onboarding Experiences
+  - Initial Product Onboarding
+  - Feature Discovery & Adoption
+  - Guided Tours & Walkthroughs
+  - Interactive Tutorials
+  - Documentation & Help
+- Empty State Design
+  - What Will Be Here
+  - Why It Matters
+  - How to Get Started
+  - Visual Interest
+  - Contextual Help
+- Implementation Patterns
+  - Technical approaches:
+- Verify Onboarding Quality
+
 > **Additional context needed**: the "aha moment" you want users to reach, and users' experience level.
 
 Get users to first value as fast as possible. Onboarding's job is not to teach the product. Its job is to get people to the moment that proves the product is worth their time.

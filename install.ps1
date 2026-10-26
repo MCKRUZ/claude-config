@@ -5,9 +5,10 @@
 
 .DESCRIPTION
   Copies the portable config into ~/.claude and ~/.agents/skills, rewrites the
-  original machine's username in path references, recreates the skill symlinks,
-  restores the 13 MCP server registrations via `claude mcp add-json`, and
-  replays the plugin marketplaces + installs via the `claude plugin` CLI.
+  original machine's username in path references, recreates the skill links in
+  links.json, restores the MCP server registrations in mcpServers.json via
+  `claude mcp add-json`, and replays the plugin marketplaces + installs via the
+  `claude plugin` CLI.
 
   Never touches secrets. See SECRETS-CHECKLIST.md for what to re-add manually.
   Never deletes anything — existing files at any destination are renamed aside
@@ -82,56 +83,36 @@ Write-Host "`n[4/6] Rewriting '$sourceUsername' -> '$targetUsername' in path ref
 if ($sourceUsername -eq $targetUsername) {
     Write-Host "  usernames match — nothing to rewrite" -ForegroundColor DarkGray
 } else {
-    $filesToRewrite = @(
-        'claude\CLAUDE.md',
-        'claude\commands\refresh.md',
-        'claude\context-governor\pin-baseline.ps1',
-        'claude\docs\agents\issue-tracker.md',
-        'claude\hooks\auto-format.sh',
-        'claude\hooks\communication-style-inject.mjs',
-        'claude\hooks\skill-switchboard\rules.json',
-        'claude\hooks\toggle-ollama-delegate.ps1',
-        'claude\mcp-servers\launch.js',
-        'claude\rules\mcp-servers.md',
-        'claude\rules\security.md',
-        'claude\scripts\cleanup-orphaned-claude.ps1',
-        'claude\scripts\SKILL_SYNC_README.md',
-        'claude\scripts\sync-skill-from-repo.ps1',
-        'claude\scripts\sync-skill-to-repo.ps1',
-        'claude\settings.json',
-        'claude\settings.local.json',
-        'claude\skills\communication-style\INJECT.md',
-        'claude\skills\communication-style\SKILL.md',
-        'claude\skills-archive\claude-code-mastery\.claude\settings.local.json',
-        '.devsecrets\devsecrets.js',
-        '.devsecrets\DevSecrets.psm1',
-        '.devsecrets\README.md'
-    )
-    foreach ($rel in $filesToRewrite) {
-        $target = if ($rel.StartsWith('.devsecrets')) {
-            Join-Path $targetHome $rel
-        } else {
-            Join-Path $targetHome $rel.Replace('claude\', '.claude\')
-        }
-        if (Test-Path -LiteralPath $target) {
-            Write-Host "  $rel"
-            if (-not $WhatIf) {
-                $content = Get-Content -LiteralPath $target -Raw
-                $rewritten = $content -replace [regex]::Escape($sourceUsername), $targetUsername
-                if ($rewritten -ne $content) {
+    # Every packaged text file that mentions the old username, found at install time so the
+    # list can never go stale. Package folder -> installed folder:
+    $folderMap = @{ 'claude' = '.claude'; 'agents-skills' = '.agents\skills'; 'devsecrets' = '.devsecrets' }
+    $textExtensions = @('.md', '.json', '.ps1', '.psm1', '.mjs', '.js', '.py', '.sh', '.txt', '.yaml', '.yml', '.toml', '.html')
+    foreach ($folder in $folderMap.Keys) {
+        $packageFolder = Join-Path $scriptRoot $folder
+        Get-ChildItem -LiteralPath $packageFolder -Recurse -File -Force |
+            Where-Object { $_.Extension -in $textExtensions } |
+            Where-Object { (Get-Content -LiteralPath $_.FullName -Raw) -match [regex]::Escape($sourceUsername) } |
+            ForEach-Object {
+                $rel = $_.FullName.Substring($packageFolder.Length).TrimStart('\')
+                $target = Join-Path (Join-Path $targetHome $folderMap[$folder]) $rel
+                if (-not (Test-Path -LiteralPath $target)) { return }
+                Write-Host "  $folder\$rel"
+                if (-not $WhatIf) {
+                    $content = Get-Content -LiteralPath $target -Raw
+                    $rewritten = $content -replace [regex]::Escape($sourceUsername), $targetUsername
                     Set-Content -LiteralPath $target -Value $rewritten -NoNewline
                 }
             }
-        }
     }
 }
 
-# --- 5. Recreate the 3 skill symlinks -------------------------------------------
-Write-Host "`n[5/6] Recreating skill symlinks (requires Developer Mode or admin)" -ForegroundColor Cyan
-$symlinks = @('excalidraw-diagram-generator', 'find-skills', 'shannon')
-foreach ($name in $symlinks) {
-    $linkPath = Join-Path $targetHome ".claude\skills\$name"
-    $targetPath = Join-Path $targetHome ".agents\skills\$name"
+# --- 5. Recreate the skill links listed in links.json ----------------------------
+Write-Host "`n[5/6] Recreating skill links (symlink needs Developer Mode or admin; falls back to a junction)" -ForegroundColor Cyan
+$links = (Get-Content -LiteralPath (Join-Path $scriptRoot 'links.json') -Raw | ConvertFrom-Json).links
+foreach ($entry in $links) {
+    $name = $entry.link
+    $linkPath = Join-Path $targetHome $entry.link
+    $targetPath = Join-Path $targetHome $entry.target
     Backup-IfExists -Path $linkPath
     if (-not $WhatIf) {
         try {
@@ -179,18 +160,47 @@ if (-not $SkipPlugins) {
     # combined with a partial retry).
     $settings = Get-Content -LiteralPath (Join-Path $scriptRoot 'claude\settings.json') -Raw | ConvertFrom-Json
 
+    # Marketplaces that point at a local folder on the source machine. Each one either has a
+    # GitHub home to add instead, or a clone that recreates the folder, or is machine-specific.
+    $directoryMarketplaces = @{
+        'claude-code-playground-mods' = @{
+            Clone   = 'https://github.com/anthropics/claude-code-playground.git'
+            CloneTo = '.claude\mods\claude-code-playground'
+            Path    = '.claude\mods\claude-code-playground\claude-code\mods'
+        }
+        'wt-local'                    = @{ Skip = 'Windows Terminal Canary local path — reinstall manually if that app is on this machine' }
+    }
+    $skippedMarketplaces = @('builtin', 'synced')  # ship with Claude Code / claude.ai, nothing to add
+
     foreach ($mktName in $settings.extraKnownMarketplaces.PSObject.Properties.Name) {
         $src = $settings.extraKnownMarketplaces.$mktName.source
-        $sourceArg = switch ($src.source) {
-            'github'    { $src.repo }
-            'directory' { $src.path }
-            default     { $null }
+        $sourceArg = $null
+        if ($src.source -eq 'github') {
+            $sourceArg = $src.repo
+        } elseif ($src.source -eq 'directory') {
+            $plan = $directoryMarketplaces[$mktName]
+            if (-not $plan) {
+                Write-Host "  SKIP $mktName (local folder with no known GitHub home: $($src.path))" -ForegroundColor Yellow
+                $skippedMarketplaces += $mktName
+                continue
+            }
+            if ($plan.Skip) {
+                Write-Host "  SKIP $mktName ($($plan.Skip))" -ForegroundColor Yellow
+                $skippedMarketplaces += $mktName
+                continue
+            }
+            if ($plan.Repo) {
+                $sourceArg = $plan.Repo
+            } else {
+                $cloneTo = Join-Path $targetHome $plan.CloneTo
+                if (-not (Test-Path -LiteralPath $cloneTo)) {
+                    Write-Host "  clone: $($plan.Clone) -> $cloneTo"
+                    if (-not $WhatIf) { & git clone --depth 1 $plan.Clone $cloneTo 2>&1 | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray } }
+                }
+                $sourceArg = Join-Path $targetHome $plan.Path
+            }
         }
         if (-not $sourceArg) { continue }
-        if ($mktName -eq 'wt-local') {
-            Write-Host "  SKIP wt-local (Windows Terminal Canary local path — reinstall manually if that app is on this machine: $sourceArg)" -ForegroundColor Yellow
-            continue
-        }
         Write-Host "  marketplace: $mktName ($sourceArg)"
         if (-not $WhatIf) {
             & claude plugin marketplace add $sourceArg 2>&1 | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray }
@@ -199,8 +209,9 @@ if (-not $SkipPlugins) {
 
     foreach ($pluginId in $settings.enabledPlugins.PSObject.Properties.Name) {
         if ($settings.enabledPlugins.$pluginId -ne $true) { continue }
-        if ($pluginId -like '*@wt-local') {
-            Write-Host "  SKIP $pluginId (depends on wt-local marketplace)" -ForegroundColor Yellow
+        $mkt = ($pluginId -split '@')[-1]
+        if ($mkt -in $skippedMarketplaces) {
+            Write-Host "  SKIP $pluginId (marketplace '$mkt' not restored)" -ForegroundColor Yellow
             continue
         }
         Write-Host "  install: $pluginId"
@@ -218,6 +229,7 @@ Write-Host "Next steps (see README.md for detail):"
 Write-Host "  1. Run: claude login"
 Write-Host "  2. Re-add secrets per SECRETS-CHECKLIST.md (values only, never files)"
 Write-Host "  3. Install PREREQUISITES.md software you don't already have"
-Write-Host "  4. Clone + build the Nexus project if you want its 3 hooks working"
-Write-Host "  5. Download github-mcp-server.exe (see PREREQUISITES.md) for the github MCP server"
+Write-Host "  4. Clone + build the Nexus and jarvis-os projects if you want their hooks working"
+Write-Host "  5. Fetch the MCP server binaries/clones this package doesn't carry (github-mcp-server,"
+Write-Host "     blender-agent-studio, rea) — see PREREQUISITES.md"
 Write-Host "  6. Run .\verify.ps1 to check the install"

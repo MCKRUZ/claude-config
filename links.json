@@ -1,0 +1,28 @@
+{
+  "_comment": "Skill folders that live once in ~/.agents/skills and are linked into ~/.claude. Paths are relative to the user profile. install.ps1 creates these; verify.ps1 checks them.",
+  "links": [
+    { "link": ".claude/skills/cavecrew", "target": ".agents/skills/cavecrew" },
+    { "link": ".claude/skills/caveman", "target": ".agents/skills/caveman" },
+    { "link": ".claude/skills/caveman-commit", "target": ".agents/skills/caveman-commit" },
+    { "link": ".claude/skills/caveman-compress", "target": ".agents/skills/caveman-compress" },
+    { "link": ".claude/skills/caveman-discover", "target": ".agents/skills/caveman-discover" },
+    { "link": ".claude/skills/caveman-evidence-review", "target": ".agents/skills/caveman-evidence-review" },
+    { "link": ".claude/skills/caveman-explore", "target": ".agents/skills/caveman-explore" },
+    { "link": ".claude/skills/caveman-help", "target": ".agents/skills/caveman-help" },
+    { "link": ".claude/skills/caveman-learn", "target": ".agents/skills/caveman-learn" },
+    { "link": ".claude/skills/caveman-manage", "target": ".agents/skills/caveman-manage" },
+    { "link": ".claude/skills/caveman-optimize", "target": ".agents/skills/caveman-optimize" },
+    { "link": ".claude/skills/caveman-review", "target": ".agents/skills/caveman-review" },
+    { "link": ".claude/skills/caveman-setup", "target": ".agents/skills/caveman-setup" },
+    { "link": ".claude/skills/caveman-stats", "target": ".agents/skills/caveman-stats" },
+    { "link": ".claude/skills/find-skills", "target": ".agents/skills/find-skills" },
+    { "link": ".claude/skills-archive/excalidraw-diagram-generator", "target": ".agents/skills/excalidraw-diagram-generator" },
+    { "link": ".claude/skills-archive/investigate-first", "target": ".agents/skills/investigate-first" },
+    { "link": ".claude/skills-archive/lean-build", "target": ".agents/skills/lean-build" },
+    { "link": ".claude/skills-archive/migration", "target": ".agents/skills/migration" },
+    { "link": ".claude/skills-archive/safe-refactor", "target": ".agents/skills/safe-refactor" },
+    { "link": ".claude/skills-archive/shannon", "target": ".agents/skills/shannon" },
+    { "link": ".claude/skills-archive/surgical-patch", "target": ".agents/skills/surgical-patch" },
+    { "link": ".claude/skills-archive/verify-and-stop", "target": ".agents/skills/verify-and-stop" }
+  ]
+}

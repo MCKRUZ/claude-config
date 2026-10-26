@@ -25,10 +25,14 @@ These were removed (archived to `MCKRUZ/claude-agents-archive`) because a mainta
 
 ## When to Auto-Spawn Agents
 
-Only mandatory without user prompt:
+Only mandatory without user prompt, and only on the stack these agents are actually built for
+(**.NET / Angular / Azure** — both agents' own descriptions scope them there explicitly). On any
+other stack (e.g. a pure Python/`uv` project), these triggers structurally cannot fire — treat
+them as "available on request" instead, same as planner/architect below, rather than assuming
+the mandatory rule is covering that project.
 
-1. Security-sensitive code (auth, payments, identity) → **security-reviewer**
-2. Build failure → **build-error-resolver**
+1. Security-sensitive code (auth, payments, identity), .NET/Angular/Azure only → **security-reviewer**
+2. Build failure, .NET/Angular only → **build-error-resolver**
 
 Available on request or when clearly beneficial:
 

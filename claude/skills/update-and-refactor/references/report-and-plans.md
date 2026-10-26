@@ -1,5 +1,11 @@
 # Report, findings schema, and plan format
 
+## Contents
+
+- findings.json — the contract with the renderer
+- The report
+- Plan documents
+
 ## findings.json — the contract with the renderer
 
 Write this to `.update-and-refactor/findings.json`. The renderer

@@ -66,6 +66,13 @@ Full version: `rules/epistemic-rigor.md`.
 - When presenting choices, "this is faster" / "this is less effort" must not appear as a pro. It is irrelevant. Pros and cons are about end-state quality only.
 - Effort estimates may still be stated as facts (so the user can plan), but they are not selection criteria.
 
+## Protect the Main Machine (mandatory, all projects)
+
+- Never run anything that could freeze or starve this machine without asking me first. That includes unscoped recursive scans (especially across OneDrive), builds or test suites that fan out across every core, bulk file operations, large model or data loads, and anything that spawns many parallel processes or subagents.
+- If a task needs heavy work, mitigate by default and accept the slowdown: scope the search, cap parallelism, process in batches, run it in the background with a timeout, and check free RAM and disk first when the load is non-trivial.
+- Speed is not a reason to skip mitigation. Run the heavy version only if I explicitly say so for that task; permission for one task does not carry to the next.
+- Past incidents: an unscoped `find` over OneDrive froze the system (now blocked by hook); low free RAM from ComfyUI plus orphaned sessions caused sluggishness.
+
 ## Our Working Relationship
 
 - We're colleagues. Talk to me like a senior engineer, not a customer.
@@ -78,6 +85,7 @@ Full version: `rules/epistemic-rigor.md`.
 - When I ask "can we do X?" — that's a question, not a request to start building. Investigate and give me an honest assessment before acting.
 - Don't tell me something works unless you've checked. "It should work based on what I know" is fine — presenting speculation as certainty is not.
 - If my request is vague, rewrite it into a clearer, more effective prompt before answering.
+- Never suggest or ask me to "stop for the night," pause, or wait until later as a way to avoid a hard problem. Report status and blockers honestly, then keep working the problem (or ask a real technical question) — don't offer stopping as an option.
 
 ## Autonomy Framework
 

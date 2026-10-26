@@ -16,15 +16,6 @@
     ],
     "env": {}
   },
-  "sequential-thinking": {
-    "type": "stdio",
-    "command": "npx",
-    "args": [
-      "-y",
-      "@modelcontextprotocol/server-sequential-thinking"
-    ],
-    "env": {}
-  },
   "playwright": {
     "type": "stdio",
     "command": "npx",
@@ -118,6 +109,57 @@
     "args": [],
     "env": {
       "COMFY_BIN": "C:\\Users\\kruz7\\.local\\bin\\comfy.exe"
+    }
+  },
+  "readwise": {
+    "type": "http",
+    "url": "https://mcp2.readwise.io/mcp"
+  },
+  "blender-agent-studio": {
+    "type": "stdio",
+    "command": "bun",
+    "args": [
+      "C:/Users/kruz7/.claude/mcp-servers/blender-agent-studio/plugins/blender-agent-studio/mcp/server.ts"
+    ],
+    "env": {
+      "BLENDER_EXECUTABLE": "F:\\Blender 5.2\\blender.exe"
+    }
+  },
+  "tiktok-apify": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\launch.js",
+      "--secret",
+      "APIFY_TOKEN",
+      "--",
+      "node",
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\tiktok-apify.js"
+    ],
+    "env": {}
+  },
+  "instagram-apify": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\launch.js",
+      "--secret",
+      "APIFY_TOKEN",
+      "--",
+      "node",
+      "C:\\Users\\kruz7\\.claude\\mcp-servers\\instagram-apify.js"
+    ],
+    "env": {}
+  },
+  "rea": {
+    "command": "C:\\nvm4w\\nodejs\\node.exe",
+    "args": [
+      "C:\\nvm4w\\nodejs\\node_modules\\rea-agents\\scripts\\rea.mjs",
+      "mcp"
+    ],
+    "env": {
+      "GHIDRA_INSTALL_DIR": "C:\\Tools\\ghidra_12.1.4_PUBLIC",
+      "JAVA_HOME": "C:\\Tools\\jdk-21.0.12.1+1"
     }
   }
 }

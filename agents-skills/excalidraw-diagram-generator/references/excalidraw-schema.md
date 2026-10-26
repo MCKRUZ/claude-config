@@ -1,5 +1,28 @@
 # Excalidraw JSON Schema Reference
 
+## Contents
+
+- Top-Level Structure
+- AppState
+- ExcalidrawElement Base Properties
+- Element Types
+  - Rectangle
+  - Ellipse
+  - Diamond
+  - Arrow
+  - Line
+  - Text
+- Bindings
+- Common Colors
+- ID Generation
+- Seed Generation
+- Version and VersionNonce
+- Coordinate System
+- Recommended Spacing
+- Font Families
+- Validation Rules
+- Complete Minimal Example
+
 This document describes the structure of Excalidraw `.excalidraw` files for diagram generation.
 
 ## Top-Level Structure

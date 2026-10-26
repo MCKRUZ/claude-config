@@ -1,3 +1,17 @@
+## Contents
+
+- Assess Current State
+- Plan Simplification
+- Simplify the Design
+  - Information Architecture
+  - Visual Simplification
+  - Layout Simplification
+  - Interaction Simplification
+  - Content Simplification
+  - Code Simplification
+- Verify Simplification
+- Document Removed Complexity
+
 Strip a design to its essence. Remove anything that doesn't earn its place: redundant elements, repeated information, decorative noise, cosmetic complexity.
 
 

@@ -6,7 +6,13 @@
     "LANGFUSE_HOST": "https://langfuse.bablyon.synology.me",
     "CLAUDE_CODE_EFFORT_LEVEL": "high",
     "CLAUDE_HOOK_PROFILE": "standard",
-    "CLAUDE_DISABLED_HOOKS": "ollama-delegate,kill-mcp-children"
+    "CLAUDE_DISABLED_HOOKS": "ollama-delegate,kill-mcp-children",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL": "http/json",
+    "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "http://127.0.0.1:47821/v1/metrics",
+    "OTEL_METRIC_EXPORT_INTERVAL": "30000",
+    "OTEL_METRICS_INCLUDE_REPOSITORY": "true"
   },
   "permissions": {
     "allow": [
@@ -36,7 +42,6 @@
       "Bash(tail *)",
       "Bash(sed *)",
       "Bash(grep *)",
-      "Bash(find *)",
       "Bash(wc *)",
       "Bash(sort *)",
       "Bash(uniq *)",
@@ -46,7 +51,6 @@
       "Bash(ls *)",
       "Bash(mkdir *)",
       "Bash(cp *)",
-      "mcp__bifrost__*",
       "mcp__nexus-local__*",
       "mcp__mcp-unity__*"
     ],
@@ -72,8 +76,14 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/prompt-receipt-log.mjs\"",
+            "timeout": 5
+          },
+          {
+            "type": "command",
             "command": "node \"C:/Users/kruz7/.claude/hooks/communication-style-inject.mjs\"",
-            "statusMessage": "Loading communication style"
+            "statusMessage": "Loading communication style",
+            "timeout": 5
           }
         ]
       },
@@ -82,8 +92,17 @@
           {
             "type": "command",
             "command": "node \"C:/Users/kruz7/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/hooks/nexus-user-prompt-submit.mjs\"",
-            "timeout": 5000,
+            "timeout": 5,
             "statusMessage": "Nexus: checking prior decisions"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/jarvis-hud-forward.mjs\" 2",
+            "timeout": 5
           }
         ]
       }
@@ -94,12 +113,12 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-start.ps1\"",
-            "timeout": 10000
+            "timeout": 30
           },
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-end.ps1\"",
-            "timeout": 10000,
+            "timeout": 30,
             "statusMessage": "Ensuring today's session file exists"
           }
         ]
@@ -109,7 +128,7 @@
           {
             "type": "command",
             "command": "node \"C:/Users/kruz7/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/packages/cli/dist/index.js\" sync --quiet --graceful",
-            "timeout": 15000
+            "timeout": 30
           }
         ]
       },
@@ -118,7 +137,7 @@
           {
             "type": "command",
             "command": "node --experimental-sqlite \"C:\\Users\\kruz7\\.claude\\hooks\\nexus-session-start.mjs\"",
-            "timeout": 10000
+            "timeout": 30
           }
         ]
       },
@@ -126,7 +145,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"C:/nvm4w/nodejs/node.exe\" \"C:/Users/kruz7/.claude/hooks/context-mode-cache-heal.mjs\""
+            "command": "\"C:/nvm4w/nodejs/node.exe\" \"C:/Users/kruz7/.claude/hooks/context-mode-cache-heal.mjs\"",
+            "timeout": 30
           }
         ]
       }
@@ -138,7 +158,7 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/quality-gates/git-safety.ps1\"",
-            "timeout": 5000
+            "timeout": 10
           }
         ]
       },
@@ -148,7 +168,7 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/quality-gates/config-protection.ps1\"",
-            "timeout": 5000
+            "timeout": 10
           }
         ]
       },
@@ -158,7 +178,7 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/skill-switchboard/switchboard.ps1\"",
-            "timeout": 8000
+            "timeout": 10
           }
         ]
       },
@@ -168,7 +188,7 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/strategic-compact/suggest-compact.ps1\"",
-            "timeout": 5000
+            "timeout": 10
           }
         ]
       },
@@ -180,6 +200,16 @@
             "prompt": "Before pushing, list the commits that will be pushed and remind the user to review changes."
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/quality-gates/block-find.ps1\"",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "PreCompact": [
@@ -188,7 +218,7 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/pre-compact.ps1\"",
-            "timeout": 10000
+            "timeout": 30
           },
           {
             "type": "prompt",
@@ -213,12 +243,12 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-summarize.ps1\"",
-            "timeout": 10000
+            "timeout": 30
           },
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/session-end.ps1\"",
-            "timeout": 10000
+            "timeout": 30
           }
         ]
       },
@@ -227,7 +257,7 @@
           {
             "type": "command",
             "command": "node \"C:/Users/kruz7/OneDrive/Documents/Code Repos/MCKRUZ/Nexus/packages/cli/dist/index.js\" hook post-session --quiet",
-            "timeout": 60000
+            "timeout": 60
           }
         ]
       },
@@ -236,7 +266,16 @@
           {
             "type": "command",
             "command": "\"C:/Users/kruz7/AppData/Local/Programs/Python/Python313/python.exe\" \"C:/Users/kruz7/.claude/hooks/langfuse_hook.py\"",
-            "timeout": 120000
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/jarvis-hud-forward.mjs\" 2",
+            "timeout": 5
           }
         ]
       }
@@ -248,7 +287,7 @@
           {
             "type": "command",
             "command": "py \"C:/Users/kruz7/.claude/hooks/semgrep-async-scan.py\"",
-            "timeout": 15000
+            "timeout": 15
           }
         ]
       },
@@ -258,7 +297,7 @@
           {
             "type": "command",
             "command": "bash \"/c/Users/kruz7/.claude/hooks/auto-format.sh\"",
-            "timeout": 30000
+            "timeout": 30
           }
         ]
       },
@@ -268,7 +307,7 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/save-observation.ps1\"",
-            "timeout": 5000
+            "timeout": 10
           }
         ]
       },
@@ -278,7 +317,60 @@
           {
             "type": "command",
             "command": "node --experimental-sqlite \"C:\\Users\\kruz7\\.claude\\hooks\\nexus-post-tool-use.mjs\"",
-            "timeout": 10000
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/jarvis-hud-forward.mjs\" 2",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/jarvis-hud-forward.mjs\" 2",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/jarvis-hud-forward.mjs\" 70",
+            "timeout": 75
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/jarvis-hud-forward.mjs\" 2",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:/Users/kruz7/.claude/hooks/jarvis-hud-forward.mjs\" 2",
+            "timeout": 5
           }
         ]
       }
@@ -305,7 +397,17 @@
     "pyright-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "csharp-lsp@claude-plugins-official": true,
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "nateherk-design@nateherk": true,
+    "savvy-progress@claude-kit": true,
+    "skins@hellosverre-mods": true,
+    "filetree@claude-code-filetree": true,
+    "cache-tax@claude-code-mods": true,
+    "reflect-mod@claude-reflect-marketplace": true,
+    "blast-radius@claude-code-playground-mods": false,
+    "replay-theater@claude-code-playground-mods": true,
+    "cc-plugin-you-should-know@builtin": true,
+    "design@synced": false
   },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
@@ -361,21 +463,74 @@
         "source": "github",
         "repo": "OrRon/EpicInfographics"
       }
+    },
+    "nateherk": {
+      "source": {
+        "source": "github",
+        "repo": "nateherkai/scroll-craft"
+      }
+    },
+    "claude-kit": {
+      "source": {
+        "source": "github",
+        "repo": "johnnyvizz/claude-kit"
+      }
+    },
+    "hellosverre-mods": {
+      "source": {
+        "source": "github",
+        "repo": "hellosverre/claude-skins"
+      }
+    },
+    "claude-code-filetree": {
+      "source": {
+        "source": "github",
+        "repo": "data-goblin/claude-code-filetree"
+      }
+    },
+    "claude-code-mods": {
+      "source": {
+        "source": "github",
+        "repo": "karanb192/claude-code-mods"
+      }
+    },
+    "claude-reflect-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "bayramannakov/claude-reflect"
+      }
+    },
+    "claude-code-playground-mods": {
+      "source": {
+        "source": "directory",
+        "path": "C:\\Users\\kruz7\\.claude\\mods\\claude-code-playground\\claude-code\\mods"
+      }
     }
   },
+  "outputStyle": "Concise",
   "alwaysThinkingEnabled": true,
+  "advisorModel": "opus",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "remoteControlAtStartup": true,
   "crossSessionInbound": "accept",
   "agentPushNotifEnabled": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(gh pr merge*) — merging a pull request, including with --admin/--squash/--delete-branch, is allowed without a fresh confirmation each time. The user has explicitly and repeatedly authorized this pattern; on a solo repository the admin bypass this triggers is simply re-confirming the same authorization already given. Still confirm before merging if the branch is main/master itself, or if the command also force-pushes or rewrites history."
+    ]
+  },
   "voiceEnabled": true,
   "mcpNotes": {
     "sentry": "Removed 2026-02-09 - Add back when deploying production apps: https://mcp.sentry.dev/mcp",
     "filesystem": "Removed 2026-02-09 - Built-in Read/Write/Glob/Grep cover file ops, saved ~2-3K tokens",
     "memory": "Removed 2026-02-09. Replaced by cmem, then agentmemory; agentmemory removed 2026-08-05 (LLM summarize never configured — 3,609 calls, 0 successes, 1 memory stored, so capture never became recall). Session memory now via memory-persistence hooks + Nexus.",
     "hub-mode": "Replaced mcp-hub with Bifrost MCP gateway on mac-mini:8090 (2026-03-26). Nexus runs direct as nexus-local. Context Lens removed (Nexus handles analytics).",
+    "sequential-thinking": "Removed 2026-10-13 - 0 calls in 30 days (MCP audit).",
+    "design-plugin": "design@synced (claude.ai-synced plugin) disabled 2026-10-13 - its 7 bundled MCP servers (slack, figma, linear, asana, atlassian, notion, intercom) never connected, and its skills had 0 uses in 30 days. Re-enable with: claude plugin enable design@synced",
+    "claude-ai-connectors": "Canva, Floot, Microsoft 365, Mermaid Chart: 0 calls in 30 days; marked for removal 2026-10-13. Account-level, so they must be disconnected by hand in claude.ai Settings > Connectors (not in ~/.claude.json). Delete this note once done.",
     "config-location": "MCP servers are managed in ~/.claude.json via 'claude mcp add/remove', NOT in settings.json"
   }
 }

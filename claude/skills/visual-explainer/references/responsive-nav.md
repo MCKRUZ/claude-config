@@ -1,5 +1,15 @@
 # Responsive Section Navigation
 
+## Contents
+
+- Layout Structure
+- CSS
+  - Wrap (grid layout)
+  - TOC — Desktop (sticky sidebar)
+  - TOC — Mobile (sticky horizontal bar)
+- JavaScript — Scroll Spy
+- Adaptation Notes
+
 Navigation pattern for multi-section pages (reviews, recaps, dashboards). Provides a sticky sidebar TOC on desktop and a sticky horizontal scrollable bar on mobile.
 
 ## Layout Structure
