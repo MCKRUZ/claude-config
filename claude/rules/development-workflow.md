@@ -7,10 +7,10 @@ For non-trivial features (3+ files or unclear requirements), follow these phases
 ### Phase 1: Research & Reuse
 Before writing new code, search for existing solutions across **multiple sources**:
 1. **Codebase first**: `grep`, `glob` for similar patterns already in the project
-2. **GitHub**: `gh search repos` and `gh search code` for proven implementations; use the Bifrost GitHub Code Mode server for multi-step exploration (repo contents, issue context, PR discussions)
+2. **GitHub**: `gh search repos` and `gh search code` for proven implementations; use the `github` MCP server for multi-step exploration (repo contents, issue context, PR discussions)
 3. **Library docs**: Use Context7 (`resolve-library-id` then `query-docs`) for API specifics; use Microsoft Learn MCP for .NET/Azure APIs
 4. **YouTube**: Use the YouTube MCP server to find conference talks, deep-dive tutorials, and framework walkthroughs — video content often has implementation details that docs miss
-5. **Reddit**: Use the Bifrost Reddit Code Mode server to check community sentiment, gotchas, and real-world experience with libraries/patterns/approaches
+5. **Reddit**: Use the `reddit-apify` MCP server to check community sentiment, gotchas, and real-world experience with libraries/patterns/approaches
 6. **Web**: WebSearch for broader coverage — blog posts, Stack Overflow, official announcements
 7. **Registry search**: npm, NuGet, PyPI before hand-rolling utilities
 
@@ -59,7 +59,7 @@ If an implementation approach fails 3 consecutive times with different attempts,
 
 1. Use Context7, Microsoft Learn, or web search to find current best practices
 2. Search YouTube (MCP) for recent conference talks or tutorials covering the topic
-3. Search Reddit (Bifrost Code Mode) and GitHub issues for known gotchas or workarounds
+3. Search Reddit (`reddit-apify`) and GitHub issues for known gotchas or workarounds
 4. Check for known issues, breaking changes, or version-specific behavior
 5. Document what you found before attempting the next fix
 
