@@ -1,15 +1,12 @@
+---
+paths:
+  - "**/*.{cs,csproj,ts,tsx,js,mjs,cjs,py}"
+---
+
 # Testing
 
-## Bug Fix Workflow (MANDATORY)
-
-When I report a bug, don't start by trying to fix it. Instead:
-
-1. Write a test that reproduces the bug (prove it fails)
-2. Have subagents try to fix the bug and prove it with a passing test
-3. The fix isn't done until the test passes
-   This applies to all projects, always.
-
-When the bug — or a code-review finding — is an instance of a **class** (an unguarded sibling call, an ownership check skipped on one path), write one test that covers the class, not one per instance, and fix every instance it finds.
+Loads when code files are touched. The bug-fix workflow (reproduce with a failing test first)
+is always loaded from CLAUDE.md, because a bug report arrives before any file is opened.
 
 ## Test Philosophy
 

@@ -138,7 +138,8 @@ Full version: `rules/epistemic-rigor.md`.
 
 - Enter plan mode for any non-trivial task (3+ files or unclear requirements)
 - Use subagents for independent, parallelizable work — don't do sequentially what can run concurrently
-- When I report a bug, don't start by trying to fix it. Instead, start by writing a test that reproduces the bug. Then, have subagents try to fix the bug and prove it with a passing test.
+- When I report a bug, don't start by trying to fix it. Instead, start by writing a test that reproduces the bug (prove it fails). Then, have subagents try to fix the bug and prove it with a passing test. The fix isn't done until the test passes. This applies to all projects, always.
+- When the bug — or a code-review finding — is an instance of a **class** (an unguarded sibling call, an ownership check skipped on one path), write one test that covers the class, not one per instance, and fix every instance it finds.
 - After a mediocre fix, ask: "Is there a more elegant solution?" Don't settle on the first thing that passes.
 
 ## Response Style
