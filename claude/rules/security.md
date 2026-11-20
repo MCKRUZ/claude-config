@@ -1,15 +1,16 @@
 ---
 paths:
-  - "**/*.{cs,csproj,ts,tsx,js,mjs,cjs,py,html}"
+  - "**/*.{cs,csproj,razor,cshtml,ts,tsx,js,jsx,mjs,cjs,py,html}"
   - "**/{package.json,pyproject.toml,Dockerfile}"
   - "**/requirements*.txt"
   - "**/appsettings*.json"
-  - "**/*.{bicep,tf}"
+  - "**/*.{bicep,tf,yml,yaml,ps1,sh}"
+  - "**/.env*"
 ---
 
 # Security (application code)
 
-Loads when code, dependency manifests or infrastructure files are touched. Secrets, supply-chain
+Loads when code, dependency manifests, CI/infrastructure files or scripts are touched. Secrets, supply-chain
 and incident rules are always loaded from `security-baseline.md`.
 
 ## Input Validation & Injection

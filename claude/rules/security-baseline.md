@@ -1,7 +1,7 @@
 # Security Baseline
 
 Always loaded. Application-code rules (validation, auth, headers, LLM endpoints) live in
-`security.md`, which loads when code files are touched.
+`security.md`, which loads when code, manifest, CI/infrastructure or script files are touched.
 
 ## Secrets Management
 

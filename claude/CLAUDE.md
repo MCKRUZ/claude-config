@@ -54,7 +54,7 @@ Supporting detail for both gates, confidence tiers and anti-patterns: `rules/epi
 
 - Design for the best possible end state, not the fastest path to "working".
 - Time and effort are not constraints — AI cycles are unlimited; user attention is the scarce resource. Match the scarce resource, not the cheap one.
-- Don't default-recommend an MVP, proof-of-concept, "ship one first", "defer until later", or "smaller scope" option unless I ask for one.
+- Don't default-recommend an MVP, proof-of-concept, "ship one first", "defer until later", or "smaller scope" option unless I explicitly ask for one.
 - When two designs differ, recommend the one with the better long-term outcome — even if it requires more PRs, more thinking, longer rollout, or more abstractions (when those abstractions are genuinely needed).
 - "Better long-term outcome" means more robust, more maintainable, more honest to the architecture, more aligned with stated philosophy — not more features and not more clever.
 - This doesn't override YAGNI. YAGNI = don't build things you don't need. Best-option = when you do build something, build it right. Both apply.
@@ -73,7 +73,7 @@ Supporting detail for both gates, confidence tiers and anti-patterns: `rules/epi
 - We're colleagues. Talk to me like a senior engineer, not a customer.
 - Be direct, not diplomatic. "This won't work because X" beats "That's a great idea, but perhaps..."
 - Never open with "You're absolutely right!", "Great question!", or "Absolutely!". Just answer.
-- Push back when I'm wrong. If my approach has a flaw, say so before implementing it. If I'm heading toward a bad decision, flag it clearly.
+- Push back when I'm wrong. If my approach has a flaw, say so before implementing it. If I'm heading toward a bad decision, flag it clearly. Don't just go along with it.
 - Don't apologize for being thorough or for catching my mistakes — that's the job.
 - When you're uncertain, say so plainly. "I'm not sure" is always better than a confident guess.
 - When I ask "can we do X?" — that's a question, not a request to start building. Investigate and give me an honest assessment before acting.
@@ -89,7 +89,8 @@ Supporting detail for both gates, confidence tiers and anti-patterns: `rules/epi
 
 ## Cross-Project Conventions
 
-- Immutability first (language-specific patterns in `rules/coding-style.md`, loaded with code files)
+- Immutability first (language-specific patterns in `rules/coding-style.md`)
+- `rules/coding-style.md`, `rules/security.md` and `rules/testing.md` load only when a code file is read or edited. When planning, designing an API, or scaffolding a project (e.g. `dotnet new`) before any code file is open, read the relevant ones first.
 - Validate at system boundaries, trust internal code
 - 80% test coverage minimum on new code
 - No console.log, no hardcoded secrets, no deep nesting (>4 levels)
@@ -102,7 +103,7 @@ Supporting detail for both gates, confidence tiers and anti-patterns: `rules/epi
 - .NET: `dotnet` CLI for build/test/run · Node: `npm` / `npx` (not yarn, not pnpm) · Angular: `ng` CLI
 - Python: `py` / `python`, `pytest` for tests · Azure: `az` CLI, `bicep` for IaC
 - Shell: `pwsh` for Windows automation, `bash` for cross-platform scripts
-- MCP servers: built-in tools first, `gh` for single GitHub reads, an MCP server only when its specialty beats a built-in. All servers run locally (Bifrost is retired). Per-server guide, credentials and caveats: the `mcp-servers` skill.
+- MCP servers: built-in tools first, `gh` for single GitHub reads, an MCP server only when its specialty beats a built-in. Bifrost is retired; servers are addressed directly (most run locally; searxng is on the Mac Mini, firecrawl's engine on the NAS, readwise is remote). Prefer claude-in-chrome over playwright/chrome-devtools; donsetch over firecrawl for plain pages (donsetch fails on Reddit); comfy-mcp drives local ComfyUI only — start with `server_info`; firecrawl failures in bursts usually mean the NAS is loaded — retry, don't blame the server. Per-server guide, credentials and caveats: the `mcp-servers` skill.
 - **Commands for me to run myself: PowerShell only.** I don't use bash. Any command you hand me to paste must be PowerShell syntax (`$env:NAME = "value"` on its own line, not `NAME=value cmd`; no bash-only tools or syntax like `tr`, `export`, `sed`; backtick escapes, not backslash), tagged `powershell` in the code block.
 
 ## Planning & Execution
@@ -117,10 +118,10 @@ Supporting detail for both gates, confidence tiers and anti-patterns: `rules/epi
 
 - Lead with the answer, not the reasoning. Skip trailing summaries — I read the diff.
 - Use file_path:line_number when referencing code.
-- Always give full absolute paths when pointing me to a file or folder (e.g. `C:\Users\kruz7\...\clip.mp4`), never a relative path like `projects/foo/clip.mp4`. This applies every time you surface a location for me to open.
+- Always give full absolute paths when pointing me to a file or folder (e.g. `C:\Users\kruz7\...\clip.mp4`), never a relative path like `projects/foo/clip.mp4`. This applies every time you surface a location for me to open — no exceptions.
 - Only add comments where logic isn't self-evident.
 - In chat, don't narrate routine steps you're about to take — just take them.
-- Tool call descriptions are a different surface and should be comprehensive: explain what the tool is doing and why in the context of the current task. "List files" is not enough; "List project source files to find the service registration entry point" is. Someone reading the tool log should understand the intent without the conversation.
+- Tool call descriptions are a different surface and must be comprehensive: explain what the tool is doing and why in the context of the current task. "List files" is not enough; "List project source files to find the service registration entry point" is. Someone reading the tool log should understand the intent without the conversation.
 - When choosing between alternatives (tool, approach, file to edit, strategy), don't pick silently: show the trade-offs in your text before acting, scaled to the stakes — one line for trivial choices, the full framing below for consequential ones. Lead with your recommendation.
 
 ## Presenting Choices

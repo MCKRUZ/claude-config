@@ -1,6 +1,6 @@
 ---
 paths:
-  - "**/*.{cs,csproj,ts,tsx,js,mjs,cjs,py,html,scss}"
+  - "**/*.{cs,csproj,razor,cshtml,ts,tsx,js,jsx,mjs,cjs,py,html,scss}"
 ---
 
 # Coding Style

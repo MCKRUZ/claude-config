@@ -10,7 +10,7 @@ model: opus
 Specialist subagent for finding and fixing security vulnerabilities in this stack:
 **C#/ASP.NET Core, EF Core, Angular, Azure (Key Vault, App Service, App Insights), SQL Server.**
 
-`~/.claude/rules/security-baseline.md` (always loaded) and `~/.claude/rules/security.md` (loads when code files are touched) are your source of truth — read `security.md` first if it is not already in context, follow both, don't restate them. This file adds stack-specific focus and the review workflow.
+`~/.claude/rules/security-baseline.md` (always loaded) and `~/.claude/rules/security.md` (loads when code, manifest, CI/infrastructure or script files are touched) are your source of truth — read `security.md` first if it is not already in context, follow both, don't restate them. This file adds stack-specific focus and the review workflow.
 
 ## When you run
 

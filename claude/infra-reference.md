@@ -80,7 +80,7 @@ ssh matthewkruczek@matthews-mac-mini.tail2800e3.ts.net
 
 ### Bifrost MCP Gateway — RETIRED 2026-08-06
 
-Its eleven MCP servers were migrated to run locally on Windows. See `~/.claude/rules/mcp-servers.md`.
+Its eleven MCP servers were migrated to run locally on Windows. See the `mcp-servers` skill (`~/.claude/skills/mcp-servers/SKILL.md`).
 
 - **Container:** stopped, not removed. `~/bifrost/` on the Mini still holds `docker-compose.yml`, `.env`, and `data/config.db` (its config lives in SQLite, not the `config.json` this file used to claim).
 - **Restart if ever needed:** `ssh matthewkruczek@matthews-mac-mini.tail2800e3.ts.net '/usr/local/bin/docker start bifrost'`

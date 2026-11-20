@@ -1,6 +1,6 @@
 ---
 name: mcp-servers
-description: Reference for the MCP servers registered on this machine - what each one is for, when it beats a built-in tool, how keyed servers get credentials from the DevSecrets vault, known caveats (firecrawl on the NAS, donsetch on Windows, searxng over Tailscale), and the Bifrost rollback. Use when choosing between an MCP server and a built-in tool, adding or upgrading a server, or diagnosing a server that fails to connect.
+description: Reference for the MCP servers registered on this machine - what each one is for, when it beats a built-in tool, how keyed servers get credentials from the DevSecrets vault, known caveats (firecrawl on the NAS, donsetch on Windows, searxng over Tailscale), and the Bifrost rollback. Use when choosing between an MCP server and a built-in tool or between two servers, adding or upgrading a server, or diagnosing a server that fails to connect or returns errors (e.g. failed scrapes).
 ---
 
 # MCP Servers

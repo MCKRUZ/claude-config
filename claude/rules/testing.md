@@ -1,6 +1,6 @@
 ---
 paths:
-  - "**/*.{cs,csproj,ts,tsx,js,mjs,cjs,py}"
+  - "**/*.{cs,csproj,razor,ts,tsx,js,jsx,mjs,cjs,py}"
 ---
 
 # Testing
