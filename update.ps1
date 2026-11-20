@@ -1,4 +1,3 @@
-#Requires -Version 7.2
 <#
 .SYNOPSIS
   Checks and updates Claude Code, its plugins, and personal skills on this machine.
@@ -61,7 +60,24 @@ param(
     [switch]$SkipGitSkills
 )
 
+# Needs PowerShell 7 (SemanticVersion, ConvertFrom-Json -AsHashtable). When started from
+# Windows PowerShell 5.1, re-run this same file under pwsh with the same arguments.
+# Keep everything in this file parseable by 5.1 so this hand-off can run.
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+    if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
+        throw 'PowerShell 7 (pwsh) is required. Install it with: winget install Microsoft.PowerShell'
+    }
+    $forward = foreach ($key in $PSBoundParameters.Keys) {
+        $value = $PSBoundParameters[$key]
+        if ($value -is [switch]) { if ($value.IsPresent) { "-$key" } }
+        else { "-$key"; ($value -join ',') }
+    }
+    & pwsh -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath @forward
+    exit $LASTEXITCODE
+}
+
 $ErrorActionPreference = 'Stop'
+$Plugin = @($Plugin | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
 $claudeHome = Join-Path $env:USERPROFILE '.claude'
 $pluginsHome = Join-Path $claudeHome 'plugins'
 $agentsSkills = Join-Path $env:USERPROFILE '.agents\skills'
@@ -143,7 +159,7 @@ function Resolve-PluginStatus($p, [hashtable]$shas) {
     if ($catalogVersion -and $catalog.ManifestVersion -and $catalogVersion -ne $catalog.ManifestVersion) {
         return & $result 'catalog drift' "marketplace.json $catalogVersion / plugin.json $($catalog.ManifestVersion)"
     }
-    $latest = $catalog.ManifestVersion ?? $catalogVersion
+    $latest = if ($catalog.ManifestVersion) { $catalog.ManifestVersion } else { $catalogVersion }
     if (-not $latest -and $source -isnot [string]) { $latest = Get-RemotePluginVersion $source }
     return & $result (Get-BumpKind $p.version $latest) $latest
 }
@@ -202,7 +218,8 @@ function Update-SkillsCli {
 
 function Get-GitState([string]$repo) {
     & git -C $repo fetch --quiet 2>$null
-    $behind = (& git -C $repo rev-list --count 'HEAD..@{u}' 2>$null) ?? '?'
+    $behind = & git -C $repo rev-list --count 'HEAD..@{u}' 2>$null
+    if (-not $behind) { $behind = '?' }
     $dirty = @(& git -C $repo status --porcelain 2>$null).Count
     [pscustomobject]@{ Behind = $behind; Dirty = $dirty }
 }
