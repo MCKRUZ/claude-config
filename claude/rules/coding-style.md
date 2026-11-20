@@ -7,8 +7,8 @@ paths:
 
 Loads when code files are touched.
 
-## Immutability (CRITICAL)
-- C#: IReadOnlyList<T>/IReadOnlyDictionary<K,V> for public surfaces, readonly arrays for private backing fields, init-only properties for DTOs/config. Use records for simple value types, but NOT for polymorphic hierarchies (use classes with factory methods instead).
+## Immutability
+- C#: IReadOnlyList<T>/IReadOnlyDictionary<K,V> for public surfaces, readonly arrays for private backing fields, init-only properties for DTOs/config. Use records for simple value types, but not for polymorphic hierarchies (use classes with factory methods instead).
 - TypeScript: spread operators, never mutate objects/arrays. `{ ...obj, key }` and `[...arr, item]`.
 - NgRx reducers: always return new state objects.
 

@@ -47,7 +47,7 @@ Research means casting a wide net. Don't stop at the first source that looks pro
 
 ## Research-First Rule
 
-**This is mandatory, not optional.** When implementing something new:
+When implementing something new:
 - Spend 2-5 minutes researching before writing any code
 - Check if someone has already solved this problem (in this codebase or externally)
 - Verify API signatures and framework behavior against docs, not memory
