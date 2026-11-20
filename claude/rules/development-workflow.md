@@ -31,11 +31,19 @@ Research means casting a wide net. Don't stop at the first source that looks pro
 - Check, in order: build, types, lint, tests, security, diff
 - 80% coverage minimum on new code
 - No console.log, no hardcoded secrets, no TODO comments
+- **Show, don't claim.** Verification means running the command and keeping its output — the build, the test run, a screenshot against the design. "It should work" is not verification.
+
+**Review must converge (three rounds at most).** A review loop between an agent author and an agent reviewer can run indefinitely; Anthropic's Claude Code team saw one PR take 50+ rounds overnight, and most of what the reviewer kept re-flagging had been there since its first pass.
+- Round 1 reviews the whole diff. Triage every finding as **important** (breaks behaviour, leaks data, blocks a rollback — fix it), **nit** (fix only if local and obvious, otherwise record it as not mattering), or **pre-existing** (not introduced here — note it, don't fix it in this change).
+- For each important finding, name its **class** and fix every instance in the diff, not just the flagged line.
+- Rounds 2 and 3 review only what the fixes changed, and are given the earlier findings as "already reported — do not repeat".
+- If round 3 still leaves an important finding open, **stop and tell me the approach may be wrong** instead of starting round 4. Repos with a push gate enforce this mechanically.
 
 ### Phase 5: Commit & Review
 - Stage specific files (not `git add -A`)
 - Commit message: `type: description` (imperative mood, under 72 chars)
 - For PRs: full commit history analysis, comprehensive description
+- **PR bodies carry evidence, filled from what actually ran, not from memory:** Intent, Testing evidence (the command and its pasted output), Risk, How to revert (the exact command), and a short Explainer of the slice of code changed — what it does, what the change does to it, what would break. I read that block instead of the diff, so it must describe the code as it now is.
 
 ## Research-First Rule
 

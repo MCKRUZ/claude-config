@@ -9,6 +9,8 @@ When I report a bug, don't start by trying to fix it. Instead:
 3. The fix isn't done until the test passes
    This applies to all projects, always.
 
+When the bug — or a code-review finding — is an instance of a **class** (an unguarded sibling call, an ownership check skipped on one path), write one test that covers the class, not one per instance, and fix every instance it finds.
+
 ## Test Philosophy
 
 Tests must encode WHY behavior matters, not just WHAT it does. A test that can't fail when the underlying business logic changes is wrong.

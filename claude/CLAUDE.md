@@ -131,6 +131,7 @@ Full version: `rules/epistemic-rigor.md`.
 - Python: `py` / `python`, `pytest` for tests
 - Azure: `az` CLI, `bicep` for IaC
 - Shell: `pwsh` for Windows automation, `bash` for cross-platform scripts
+- **Commands for me to run myself: PowerShell only.** I don't use bash. Any command you hand me to paste must be PowerShell syntax (`$env:NAME = "value"` on its own line, not `NAME=value cmd`; no bash-only tools or syntax like `tr`, `export`, `sed`; backtick escapes, not backslash), tagged `powershell` in the code block.
 
 ## Planning & Execution
 
