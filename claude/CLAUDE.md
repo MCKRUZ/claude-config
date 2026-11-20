@@ -131,6 +131,7 @@ Full version: `rules/epistemic-rigor.md`.
 - Python: `py` / `python`, `pytest` for tests
 - Azure: `az` CLI, `bicep` for IaC
 - Shell: `pwsh` for Windows automation, `bash` for cross-platform scripts
+- MCP servers: built-in tools first, `gh` for single GitHub reads, an MCP server only when its specialty beats a built-in. All servers run locally (Bifrost is retired). Per-server guide, credentials and caveats: the `mcp-servers` skill.
 - **Commands for me to run myself: PowerShell only.** I don't use bash. Any command you hand me to paste must be PowerShell syntax (`$env:NAME = "value"` on its own line, not `NAME=value cmd`; no bash-only tools or syntax like `tr`, `export`, `sed`; backtick escapes, not backslash), tagged `powershell` in the code block.
 
 ## Planning & Execution
