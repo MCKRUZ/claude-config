@@ -38,3 +38,20 @@ Per-prompt communication-style injection hook, PreCompact prompt hook, `suggest-
 
 Independent fresh-context review compared old vs new: 17 findings. 13 fixed (4 stale/false pointers,
 glob gaps, 4 restored wordings, design-time gap, MCP choice rules), 4 kept as the intentional changes above.
+
+## Phase 4 addendum (2026-11-22): advice the plugin now enforces
+
+The fieldguide evidence gate now runs in enforce mode, and compact-keep runs on every compaction. Lines that only
+restated what those hooks do were trimmed:
+
+| Old text | Outcome |
+|---|---|
+| CLAUDE.md Philosophy: "Verify at every level. If you made a change, prove it works before moving on." | **Narrowed** to non-code changes: "After changing config, settings or other non-code files, prove the change took effect before moving on." The gate covers code edits. |
+| CLAUDE.md "Compact Instructions" section | **Cut.** compact-keep hands the summarizer the request, edited files, verification state, git state, and asks it to keep decisions with reasons, user corrections and preferences, and next steps. That covers every item the section listed. |
+| `development-workflow.md` Phase 4 "Show, don't claim" | **Shortened** to the part the gate does not check: keep the output of what ran (including screenshots) so PR bodies can quote it. |
+
+**Decision (Matt, 2026-11-22):** the evidence gate covers only code-file edits followed by a recognised test, build,
+lint or typecheck, not config, settings, docs or hook-registration changes. So "Verify at every level" was narrowed
+to one line for non-code changes rather than cut.
+
+If fieldguide is disabled, these three lines are the ones to restore (originals in git history of this branch).

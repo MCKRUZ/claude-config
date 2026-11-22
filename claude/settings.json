@@ -383,7 +383,8 @@
     "blast-radius@claude-code-playground-mods": false,
     "replay-theater@claude-code-playground-mods": true,
     "cc-plugin-you-should-know@builtin": true,
-    "design@synced": false
+    "design@synced": false,
+    "fieldguide@fieldguide": true
   },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
@@ -480,6 +481,19 @@
       "source": {
         "source": "directory",
         "path": "C:\\Users\\kruz7\\.claude\\mods\\claude-code-playground\\claude-code\\mods"
+      }
+    },
+    "fieldguide": {
+      "source": {
+        "source": "directory",
+        "path": "C:\\Users\\kruz7\\OneDrive\\Documents\\Code Repos\\MCKRUZ\\claude-fieldguide"
+      }
+    }
+  },
+  "pluginConfigs": {
+    "fieldguide@fieldguide": {
+      "options": {
+        "evidence_gate_mode": "enforce"
       }
     }
   },

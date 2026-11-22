@@ -6,7 +6,7 @@
 - Don't choose based on how quick it would be to build, quality over expediency.
 - Finish the job. No TODOs, partial implementations, or "exercise for the reader" gaps.
 - Replace, don't deprecate. When something is wrong, fix it — don't add a compatibility layer.
-- Verify at every level. If you made a change, prove it works before moving on.
+- After changing config, settings or other non-code files, prove the change took effect before moving on.
 - Investigate before asserting. "I think this will work" and "I verified this works" are different statements — don't conflate them.
 - Uncertainty is signal, not weakness. Saying "I need to check" costs minutes; a confident wrong answer costs hours.
 - Bias toward action. When the path is clear, execute. Don't ask for permission on obvious next steps.
@@ -136,10 +136,6 @@ When asking me to choose between paths, the question is useless without context.
 
 If I have to ask "what does option B actually mean?" or "why is this a decision?", the framing failed. Re-explain proactively when you notice ambiguity, don't wait for me to ask.
 For trivial choices (naming a variable, picking between two equivalent helper locations), skip the ceremony — a one-line "A or B, I lean A because X" is fine.
-
-## Compact Instructions
-
-When compacting, always preserve: current task status and next steps; key architectural decisions made this session; file paths actively being edited; any user preferences or corrections given this session.
 
 ## Scope Discipline
 

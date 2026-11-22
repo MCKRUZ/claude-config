@@ -169,6 +169,7 @@ if (-not $SkipPlugins) {
             Path    = '.claude\mods\claude-code-playground\claude-code\mods'
         }
         'wt-local'                    = @{ Skip = 'Windows Terminal Canary local path — reinstall manually if that app is on this machine' }
+        'fieldguide'                  = @{ Repo = 'MCKRUZ/claude-fieldguide' }
     }
     $skippedMarketplaces = @('builtin', 'synced')  # ship with Claude Code / claude.ai, nothing to add
 

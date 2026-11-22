@@ -31,7 +31,7 @@ Research means casting a wide net. Don't stop at the first source that looks pro
 - Check, in order: build, types, lint, tests, security, diff
 - 80% coverage minimum on new code
 - No console.log, no hardcoded secrets, no TODO comments
-- **Show, don't claim.** Verification means running the command and keeping its output — the build, the test run, a screenshot against the design. "It should work" is not verification.
+- **Show, don't claim.** Keep the output of what ran — the build, the test run, a screenshot against the design — so the PR body can quote it.
 
 **Review must converge (three rounds at most).** A review loop between an agent author and an agent reviewer can run indefinitely; Anthropic's Claude Code team saw one PR take 50+ rounds overnight, and most of what the reviewer kept re-flagging had been there since its first pass.
 - Round 1 reviews the whole diff. Triage every finding as **important** (breaks behaviour, leaks data, blocks a rollback — fix it), **nit** (fix only if local and obvious, otherwise record it as not mattering), or **pre-existing** (not introduced here — note it, don't fix it in this change).
