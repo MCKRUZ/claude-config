@@ -183,16 +183,6 @@
         ]
       },
       {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/strategic-compact/suggest-compact.ps1\"",
-            "timeout": 10
-          }
-        ]
-      },
-      {
         "matcher": "Bash(git push*)",
         "hooks": [
           {
@@ -219,20 +209,6 @@
             "type": "command",
             "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/kruz7/.claude/hooks/memory-persistence/pre-compact.ps1\"",
             "timeout": 30
-          },
-          {
-            "type": "prompt",
-            "prompt": "Before compaction: (1) update MEMORY.md (current work + next steps); (2) fill today's session .tmp in ~/.claude/sessions/ — populate the Request, Investigated, Learned, Completed, and Next Steps sections with this session's actual content (replace the empty <!-- --> placeholders, do not leave them blank)."
-          }
-        ]
-      }
-    ],
-    "PostCompact": [
-      {
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Context was just compacted. Re-orient yourself:\n1. Read your project's MEMORY.md (path is in the auto memory section of your system instructions) for current work state and next steps.\n2. Check the task list (TaskList) for any in-progress tasks.\n3. Review your .claude/rules/ files if working in a specific domain.\nDo NOT announce this re-orientation to the user â€” just resume working seamlessly."
           }
         ]
       }
@@ -407,7 +383,8 @@
     "blast-radius@claude-code-playground-mods": false,
     "replay-theater@claude-code-playground-mods": true,
     "cc-plugin-you-should-know@builtin": true,
-    "design@synced": false
+    "design@synced": false,
+    "fieldguide@fieldguide": true
   },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
@@ -504,6 +481,19 @@
       "source": {
         "source": "directory",
         "path": "C:\\Users\\kruz7\\.claude\\mods\\claude-code-playground\\claude-code\\mods"
+      }
+    },
+    "fieldguide": {
+      "source": {
+        "source": "directory",
+        "path": "C:\\Users\\kruz7\\OneDrive\\Documents\\Code Repos\\MCKRUZ\\claude-fieldguide"
+      }
+    }
+  },
+  "pluginConfigs": {
+    "fieldguide@fieldguide": {
+      "options": {
+        "evidence_gate_mode": "enforce"
       }
     }
   },

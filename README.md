@@ -66,5 +66,7 @@ links.json        -> which ~/.claude skill folders are links into ~/.agents/skil
 mcpServers.json   -> the user-scope MCP server registrations, replayed via `claude mcp add-json`
 install.ps1       -> the installer
 verify.ps1        -> post-install health check
+update.ps1        -> checks/updates Claude Code, plugins and skills (`-WhatIf` reports only; majors are held)
+docs/fieldguide-plugin-plan.md -> plan for a plugin that enforces the Anthropic field-guide practices
 SECRETS-CHECKLIST.md, PREREQUISITES.md -> exactly what they say
 ```

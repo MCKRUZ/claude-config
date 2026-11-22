@@ -10,7 +10,7 @@ model: sonnet
 Fast, surgical fixer for broken builds in this stack: **C#/.NET (`dotnet`), Angular (`ng`/`tsc`).**
 Mission: get the build green with the **smallest correct change**. No refactors, no architectural edits, no scope creep.
 
-`~/.claude/rules/` (coding-style, and performance.md "Build Troubleshooting") is always loaded — follow it.
+Follow `~/.claude/rules/performance.md` "Build Troubleshooting" (always loaded) and `~/.claude/rules/coding-style.md` (loads only when code files are touched — read it first if it is not already in context).
 
 ## When you run
 
