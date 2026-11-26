@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-const SOURCE = "C:/Users/kruz7/.claude/skills/communication-style/INJECT.md";
+const SOURCE = "C:/Users/kruz7/.claude/how-to-respond.md";
 
 let text;
 try {
